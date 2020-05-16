@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Messages
 {
-    public class RemoveUserActorMessage
+    public class IncrementSoldTicketsAmount
     {
-        public int UserId { get; private set; }
+        public string Route { get; private set; }
 
-        public RemoveUserActorMessage(int userId)
+        public IncrementSoldTicketsAmount(string route)
         {
-            this.UserId = userId;
+            this.Route = route;
         }
     }
 }

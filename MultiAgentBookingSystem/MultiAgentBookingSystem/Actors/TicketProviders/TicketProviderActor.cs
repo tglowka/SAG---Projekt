@@ -7,37 +7,34 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors
 {
-    public class UserActor : ReceiveActor
+    public class TicketProviderActor : ReceiveActor
     {
-        public int UserId { get; private set; }
-
-        public UserActor(int userId)
+        public TicketProviderActor()
         {
-            this.UserId = userId;
         }
 
         #region Lifecycle hooks
 
         protected override void PreStart()
         {
-            ColorConsole.WriteLineColor("UserActor Prestart", ConsoleColor.Yellow);
+            ColorConsole.WriteLineColor($"{this.GetType().Name} Prestart", ConsoleColor.DarkYellow);
         }
 
         protected override void PostStop()
         {
-            ColorConsole.WriteLineColor("UserActor PostSTop", ConsoleColor.Yellow);
+            ColorConsole.WriteLineColor($"{this.GetType().Name} PostSTop", ConsoleColor.DarkYellow);
         }
 
         protected override void PreRestart(Exception reason, object message)
         {
-            ColorConsole.WriteLineColor("UserActor PreRestart because: " + reason, ConsoleColor.Yellow);
+            ColorConsole.WriteLineColor($"{this.GetType().Name} PreRestart because: " + reason, ConsoleColor.DarkYellow);
 
             base.PreRestart(reason, message);
         }
 
         protected override void PostRestart(Exception reason)
         {
-            ColorConsole.WriteLineColor("UserActor PostRestart because: " + reason, ConsoleColor.Yellow);
+            ColorConsole.WriteLineColor($"{this.GetType().Name} PostRestart because: " + reason, ConsoleColor.DarkYellow);
 
             base.PostRestart(reason);
         }

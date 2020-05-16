@@ -85,13 +85,25 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actors\StatisticsActor.cs" />
+    <Compile Include="Actors\Brokers\BrokerActor.cs" />
+    <Compile Include="Actors\Brokers\BrokerCoordinatorActor.cs" />
+    <Compile Include="Actors\SoldTicketsActor.cs" />
     <Compile Include="Actors\SystemSupervisorActor.cs" />
-    <Compile Include="Actors\UserActor.cs" />
-    <Compile Include="Actors\UserCoordinatorActor.cs" />
+    <Compile Include="Actors\TicketProviders\TicketProviderActor.cs" />
+    <Compile Include="Actors\TicketProviders\TicketProviderCoordinatorActor.cs" />
+    <Compile Include="Actors\Users\UserActor.cs" />
+    <Compile Include="Actors\Users\UserCoordinatorActor.cs" />
     <Compile Include="ColorConsole.cs" />
-    <Compile Include="Messages\AddUserActorMessage.cs" />
-    <Compile Include="Messages\RemoveUserActorMessage.cs" />
+    <Compile Include="Actors\Interfaces\ICoordinatorActor.cs" />
+    <Compile Include="Messages\Abstracts\AddActorMessage.cs" />
+    <Compile Include="Messages\Abstracts\RemoveActorMessage.cs" />
+    <Compile Include="Messages\Brokers\AddBrokerActorMessage.cs" />
+    <Compile Include="Messages\TicketProviders\AddBrokerActorMessage.cs" />
+    <Compile Include="Messages\TicketProviders\RemoveTicketProviderActorMessage.cs" />
+    <Compile Include="Messages\Users\AddUserActorMessage.cs" />
+    <Compile Include="Messages\IncrementSoldTicketsAmount.cs" />
+    <Compile Include="Messages\Brokers\RemoveBrokerActorMessage.cs" />
+    <Compile Include="Messages\Users\RemoveUserActorMessage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

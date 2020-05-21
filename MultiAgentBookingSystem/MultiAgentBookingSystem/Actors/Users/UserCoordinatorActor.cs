@@ -36,7 +36,7 @@ namespace MultiAgentBookingSystem.Actors
         {
             if (!childrenActors.ContainsKey(actorId))
             {
-                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new UserActor()), "User" + actorId);
+                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new UserActor()));
 
                 childrenActors.Add(actorId, newChildActorRef);
 

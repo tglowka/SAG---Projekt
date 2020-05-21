@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using MultiAgentBookingSystem.Interfaces;
 using MultiAgentBookingSystem.Messages;
+using MultiAgentBookingSystem.Messages.Brokers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,10 @@ namespace MultiAgentBookingSystem.Actors
         {
             childrenActors = new Dictionary<string, IActorRef>();
 
-            Receive<AddBrokerActorMessage>(message =>
-            {
-                this.CreateChildActor(message.ActorId);
-            });
+            //Receive<AddBrokerActorMessage>(message =>
+            //{
+            //    this.CreateChildActor(message.ActorId);
+            //});
 
             Receive<RemoveBrokerActorMessage>(message =>
             {

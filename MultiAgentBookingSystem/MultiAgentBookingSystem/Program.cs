@@ -1,40 +1,47 @@
 ﻿using System;
+using System.Configuration;
 using Akka.Actor;
 using MultiAgentBookingSystem.Actors;
 using MultiAgentBookingSystem.Messages;
+using MultiAgentBookingSystem.Logger;
+using Serilog;
+using MultiAgentBookingSystem.System;
 
 namespace MultiAgentBookingSystem
 {
+
     class Program
     {
-        private static ActorSystem TicketBookingActorSystem;
         static void Main(string[] args)
         {
-            Console.WriteLine("Creating TicketBookingActorSystem");
-            TicketBookingActorSystem = ActorSystem.Create("TicketBookingActorSystem");
+            // Setup logging for the actor system
+            LoggingConfiguration.SetupLogger();
 
-            Console.WriteLine("Creating actor supervisory hierarchy");
-            TicketBookingActorSystem.ActorOf(Props.Create<SystemSupervisorActor>(), "SystemSupervisor");
-            //TicketBookingActorSystem.ActorOf(Props.Create<SystemSupervisorActor>(), "SystemSupervisor2");
+            // Inititialize supervisor actor
+            TicketBookingActorSystem.Instance.ActorOf(Props.Create<SystemSupervisorActor>(), "SystemSupervisor");
 
-            var addUserMessage = new AddUserActorMessage("1");
-            TicketBookingActorSystem.ActorSelection("/user/SystemSupervisor/UserCoordinator").Tell(addUserMessage);          
+            // Temporary testing action
             var addBrokerMessage = new AddBrokerActorMessage("1");
-            TicketBookingActorSystem.ActorSelection("/user/SystemSupervisor/BrokerCoordinator").Tell(addBrokerMessage); 
+            var addBrokerMessage2 = new AddBrokerActorMessage("11");
+
             var addTicketProviderMessage = new AddTicketProviderActorMessage("1");
-            TicketBookingActorSystem.ActorSelection("/user/SystemSupervisor/TicketProviderCoordinator").Tell(addTicketProviderMessage);
 
-            var removeUserMessage = new RemoveUserActorMessage("1");
-            TicketBookingActorSystem.ActorSelection("/user/SystemSupervisor/UserCoordinator").Tell(removeUserMessage); 
-            var removeBrokerMessage = new RemoveBrokerActorMessage("1");
-            TicketBookingActorSystem.ActorSelection("/user/SystemSupervisor/BrokerCoordinator").Tell(removeBrokerMessage);
-            var removeTicketProviderMessage = new RemoveTicketProviderActorMessage("1");
-            TicketBookingActorSystem.ActorSelection("/user/SystemSupervisor/TicketProviderCoordinator").Tell(removeTicketProviderMessage);
+            var addUserMessage1 = new AddUserActorMessage("1");
 
-            Console.WriteLine("Hello World");
+
+            TicketBookingActorSystem.Instance.ActorSelection("/user/SystemSupervisor/BrokerCoordinator").Tell(addBrokerMessage);
+            TicketBookingActorSystem.Instance.ActorSelection("/user/SystemSupervisor/BrokerCoordinator").Tell(addBrokerMessage2);
+
+            TicketBookingActorSystem.Instance.ActorSelection("/user/SystemSupervisor/TicketProviderCoordinator").Tell(addTicketProviderMessage);
+
+            TicketBookingActorSystem.Instance.ActorSelection("/user/SystemSupervisor/UserCoordinator").Tell(addUserMessage1);
+
             Console.ReadKey();
 
-            TicketBookingActorSystem.Terminate();
+            // Terminate actor system
+            TicketBookingActorSystem.Instance.Terminate();
         }
+
+
     }
 }

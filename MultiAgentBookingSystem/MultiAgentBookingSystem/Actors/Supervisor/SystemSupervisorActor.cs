@@ -8,14 +8,12 @@ namespace MultiAgentBookingSystem.Actors
         private const string UserCoordiatorActorName = "UserCoordinator";
         private const string BrokerCoordiatorActorName = "BrokerCoordinator";
         private const string TIcketProviderCoordinatorActorName = "TicketProviderCoordinator";
-        private const string StatisticsActorActorName = "StatiscticsCoordinator";
 
         public SystemSupervisorActor()
         {
             Context.ActorOf(Props.Create<UserCoordinatorActor>(), SystemSupervisorActor.UserCoordiatorActorName);
             Context.ActorOf(Props.Create<BrokerCoordinatorActor>(), SystemSupervisorActor.BrokerCoordiatorActorName);
             Context.ActorOf(Props.Create<TicketProviderCoordinatorActor>(), SystemSupervisorActor.TIcketProviderCoordinatorActorName);
-            //Context.ActorOf(Props.Create<StatisticsActor>(), SystemSupervisorActor.StatisticsActorActorName);
         }
 
         #region Lifecycle hooks

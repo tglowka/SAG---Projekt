@@ -1,6 +1,9 @@
 ﻿using Akka.Actor;
 using Akka.Event;
+using MultiAgentBookingSystem.DataResources;
 using MultiAgentBookingSystem.Messages;
+using MultiAgentBookingSystem.Messages.Brokers;
+using MultiAgentBookingSystem.System;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +14,13 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class UserActor : ReceiveActor
     {
+        private ILoggingAdapter loggingAdapter = Context.GetLogger();
 
         public UserActor()
         {
-            Receive<AddUserActorMessage>(message =>
-            {
-                ColorConsole.WriteLineColor($"UserActor received {message.ActorId}", ConsoleColor.Yellow);
-            });
+            loggingAdapter.Info("User actor {User} has been created", Self.Path);
+            loggingAdapter.Debug("User actor {User} has been created Debug message", Self.Path);
+            loggingAdapter.Error(new Exception("MY CUSTOM USER ACTOR EXCEPTION"), "User actor {User} has thrown an error", Self.Path);
         }
 
         #region Lifecycle hooks

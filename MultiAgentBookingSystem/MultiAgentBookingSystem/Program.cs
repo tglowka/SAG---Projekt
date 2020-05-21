@@ -15,7 +15,7 @@ namespace MultiAgentBookingSystem
         static void Main(string[] args)
         {
             // Setup logging for the actor system
-            LoggingConfiguration.SetupLogger();
+            LoggingConfiguration.Instance.SetupLogger();
 
             // Inititialize supervisor actor
             TicketBookingActorSystem.Instance.ActorOf(Props.Create<SystemSupervisorActor>(), "SystemSupervisor");

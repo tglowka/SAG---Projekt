@@ -1,4 +1,6 @@
 ﻿using Akka.Actor;
+using Akka.Event;
+using MultiAgentBookingSystem.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,35 +13,33 @@ namespace MultiAgentBookingSystem.Actors
     {
         public TicketProviderActor()
         {
+            LoggingConfiguration.Instance.LogActorCreation(Context.GetLogger(), this.GetType(), Self.Path);
         }
 
         #region Lifecycle hooks
 
         protected override void PreStart()
         {
-            ColorConsole.WriteLineColor($"{this.GetType().Name} Prestart", ConsoleColor.DarkYellow);
+            LoggingConfiguration.Instance.LogActorPreStart(Context.GetLogger(), Self.Path);
         }
 
         protected override void PostStop()
         {
-            ColorConsole.WriteLineColor($"{this.GetType().Name} PostSTop", ConsoleColor.DarkYellow);
+            LoggingConfiguration.Instance.LogActorPostStop(Context.GetLogger(), Self.Path);
         }
 
         protected override void PreRestart(Exception reason, object message)
         {
-            ColorConsole.WriteLineColor($"{this.GetType().Name} PreRestart because: " + reason, ConsoleColor.DarkYellow);
-
+            LoggingConfiguration.Instance.LogActorPreRestart(Context.GetLogger(), Self.Path, reason);
             base.PreRestart(reason, message);
         }
 
         protected override void PostRestart(Exception reason)
         {
-            ColorConsole.WriteLineColor($"{this.GetType().Name} PostRestart because: " + reason, ConsoleColor.DarkYellow);
-
+            LoggingConfiguration.Instance.LogActorPostRestart(Context.GetLogger(), Self.Path, reason);
             base.PostRestart(reason);
         }
 
         #endregion
-
     }
 }

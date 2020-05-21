@@ -1,6 +1,6 @@
-﻿
-using Akka.Actor;
-using MultiAgentBookingSystem.Interfaces;
+﻿using Akka.Actor;
+using Akka.Event;
+using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using System;
 using System.Collections.Generic;
@@ -8,14 +8,19 @@ using System.Threading;
 
 namespace MultiAgentBookingSystem.Actors
 {
-    public class UserCoordinatorActor : ReceiveActor, ICoordinatorActor
+    public class UserCoordinatorActor : ReceiveActor
     {
-        public Dictionary<string, IActorRef> childrenActors { get; set; }
+        private Dictionary<string, IActorRef> childrenActors = new Dictionary<string, IActorRef>();
 
         public UserCoordinatorActor()
         {
-            childrenActors = new Dictionary<string, IActorRef>();
+            this.Become(this.InitialState);
+        }
 
+        #region private methods
+
+        private void InitialState()
+        {
             Receive<AddUserActorMessage>(message =>
             {
                 this.CreateChildActor(message.ActorId);
@@ -27,7 +32,7 @@ namespace MultiAgentBookingSystem.Actors
             });
         }
 
-        public void CreateChildActor(string actorId)
+        private void CreateChildActor(string actorId)
         {
             if (!childrenActors.ContainsKey(actorId))
             {
@@ -43,7 +48,7 @@ namespace MultiAgentBookingSystem.Actors
             }
         }
 
-        public void RemoveChildActor(string actorId)
+        private void RemoveChildActor(string actorId)
         {
             if (childrenActors.ContainsKey(actorId))
             {
@@ -61,33 +66,31 @@ namespace MultiAgentBookingSystem.Actors
             }
         }
 
+        #endregion
+
         #region Lifecycle hooks
 
         protected override void PreStart()
         {
-            ColorConsole.WriteLineColor("UserCoordinatorActor Prestart", ConsoleColor.Cyan);
+            LoggingConfiguration.Instance.LogActorPreStart(Context.GetLogger(), Self.Path);
         }
 
         protected override void PostStop()
         {
-            ColorConsole.WriteLineColor("UserCoordinatorActor PostSTop", ConsoleColor.Cyan);
+            LoggingConfiguration.Instance.LogActorPostStop(Context.GetLogger(), Self.Path);
         }
 
         protected override void PreRestart(Exception reason, object message)
         {
-            ColorConsole.WriteLineColor("UserCoordinatorActor PreRestart because: " + reason, ConsoleColor.Cyan);
-
+            LoggingConfiguration.Instance.LogActorPreRestart(Context.GetLogger(), Self.Path, reason);
             base.PreRestart(reason, message);
         }
 
         protected override void PostRestart(Exception reason)
         {
-            ColorConsole.WriteLineColor("UserCoordinatorActor PostRestart because: " + reason, ConsoleColor.Cyan);
-
+            LoggingConfiguration.Instance.LogActorPostRestart(Context.GetLogger(), Self.Path, reason);
             base.PostRestart(reason);
         }
-
-
 
         #endregion
 

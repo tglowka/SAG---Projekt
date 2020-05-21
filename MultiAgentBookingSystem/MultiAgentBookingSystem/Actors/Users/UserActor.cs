@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Event;
 using MultiAgentBookingSystem.DataResources;
+using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Brokers;
 using MultiAgentBookingSystem.System;
@@ -14,38 +15,32 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class UserActor : ReceiveActor
     {
-        private ILoggingAdapter loggingAdapter = Context.GetLogger();
-
         public UserActor()
         {
-            loggingAdapter.Info("User actor {User} has been created", Self.Path);
-            loggingAdapter.Debug("User actor {User} has been created Debug message", Self.Path);
-            loggingAdapter.Error(new Exception("MY CUSTOM USER ACTOR EXCEPTION"), "User actor {User} has thrown an error", Self.Path);
+            LoggingConfiguration.Instance.LogActorCreation(Context.GetLogger(), this.GetType(), Self.Path);
         }
 
         #region Lifecycle hooks
 
         protected override void PreStart()
         {
-            ColorConsole.WriteLineColor($"{this.GetType().Name} Prestart", ConsoleColor.Yellow);
+            LoggingConfiguration.Instance.LogActorPreStart(Context.GetLogger(), Self.Path);
         }
 
         protected override void PostStop()
         {
-            ColorConsole.WriteLineColor($"{this.GetType().Name} PostSTop", ConsoleColor.Yellow);
+            LoggingConfiguration.Instance.LogActorPostStop(Context.GetLogger(), Self.Path);
         }
 
         protected override void PreRestart(Exception reason, object message)
         {
-            ColorConsole.WriteLineColor($"{this.GetType().Name} PreRestart because: " + reason, ConsoleColor.Yellow);
-
+            LoggingConfiguration.Instance.LogActorPreRestart(Context.GetLogger(), Self.Path, reason);
             base.PreRestart(reason, message);
         }
 
         protected override void PostRestart(Exception reason)
         {
-            ColorConsole.WriteLineColor($"{this.GetType().Name} PostRestart because: " + reason, ConsoleColor.Yellow);
-
+            LoggingConfiguration.Instance.LogActorPostRestart(Context.GetLogger(), Self.Path, reason);
             base.PostRestart(reason);
         }
 

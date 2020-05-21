@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
-using MultiAgentBookingSystem.Interfaces;
+using Akka.Event;
+using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Brokers;
 using System;
@@ -10,18 +11,23 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors
 {
-    public class BrokerCoordinatorActor : ReceiveActor, ICoordinatorActor
+    public class BrokerCoordinatorActor : ReceiveActor
     {
-        public Dictionary<string, IActorRef> childrenActors { get; set; }
+        private Dictionary<string, IActorRef> childrenActors = new Dictionary<string, IActorRef>();
 
         public BrokerCoordinatorActor()
         {
-            childrenActors = new Dictionary<string, IActorRef>();
+            this.Become(this.InitialState);
+        }
 
-            //Receive<AddBrokerActorMessage>(message =>
-            //{
-            //    this.CreateChildActor(message.ActorId);
-            //});
+        #region private methods
+
+        private void InitialState()
+        {
+            Receive<AddBrokerActorMessage>(message =>
+            {
+                this.CreateChildActor(message.ActorId);
+            });
 
             Receive<RemoveBrokerActorMessage>(message =>
             {
@@ -29,7 +35,7 @@ namespace MultiAgentBookingSystem.Actors
             });
         }
 
-        public void CreateChildActor(string actorId)
+        private void CreateChildActor(string actorId)
         {
             if (!childrenActors.ContainsKey(actorId))
             {
@@ -45,7 +51,7 @@ namespace MultiAgentBookingSystem.Actors
             }
         }
 
-        public void RemoveChildActor(string actorId)
+        private void RemoveChildActor(string actorId)
         {
             if (childrenActors.ContainsKey(actorId))
             {
@@ -63,31 +69,32 @@ namespace MultiAgentBookingSystem.Actors
             }
         }
 
+        #endregion
+
         #region Lifecycle hooks
 
         protected override void PreStart()
         {
-            ColorConsole.WriteLineColor($"{this.GetType().Name} Prestart", ConsoleColor.DarkRed);
+            LoggingConfiguration.Instance.LogActorPreStart(Context.GetLogger(), Self.Path);
         }
 
         protected override void PostStop()
         {
-            ColorConsole.WriteLineColor($"{this.GetType().Name} PostSTop", ConsoleColor.DarkRed);
+            LoggingConfiguration.Instance.LogActorPostStop(Context.GetLogger(), Self.Path);
         }
 
         protected override void PreRestart(Exception reason, object message)
         {
-            ColorConsole.WriteLineColor($"{this.GetType().Name} PreRestart because: " + reason, ConsoleColor.DarkRed);
-
+            LoggingConfiguration.Instance.LogActorPreRestart(Context.GetLogger(), Self.Path, reason);
             base.PreRestart(reason, message);
         }
 
         protected override void PostRestart(Exception reason)
         {
-            ColorConsole.WriteLineColor($"{this.GetType().Name} PostRestart because: " + reason, ConsoleColor.DarkRed);
-
+            LoggingConfiguration.Instance.LogActorPostRestart(Context.GetLogger(), Self.Path, reason);
             base.PostRestart(reason);
         }
+
         #endregion
 
     }

@@ -111,7 +111,6 @@
     <Compile Include="Actors\Users\UserActor.cs" />
     <Compile Include="Actors\Users\UserCoordinatorActor.cs" />
     <Compile Include="ColorConsole.cs" />
-    <Compile Include="Actors\Interfaces\ICoordinatorActor.cs" />
     <Compile Include="DataResources\TicketPossibleRoutes.cs" />
     <Compile Include="Logger\LoggingConfiguration.cs" />
     <Compile Include="Messages\Abstracts\AddActorMessage.cs" />

@@ -7,15 +7,15 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class SystemSupervisorActor : ReceiveActor
     {
-        private const string UserCoordiatorActorName = "UserCoordinator";
-        private const string BrokerCoordiatorActorName = "BrokerCoordinator";
-        private const string TIcketProviderCoordinatorActorName = "TicketProviderCoordinator";
+        private readonly string UserCoordiatorActorName = "UserCoordinator";
+        private readonly string BrokerCoordiatorActorName = "BrokerCoordinator";
+        private readonly string TicketProviderCoordinatorActorName = "TicketProviderCoordinator";
 
         public SystemSupervisorActor()
         {
-            Context.ActorOf(Props.Create<UserCoordinatorActor>(), SystemSupervisorActor.UserCoordiatorActorName);
-            Context.ActorOf(Props.Create<BrokerCoordinatorActor>(), SystemSupervisorActor.BrokerCoordiatorActorName);
-            Context.ActorOf(Props.Create<TicketProviderCoordinatorActor>(), SystemSupervisorActor.TIcketProviderCoordinatorActorName);
+            Context.ActorOf(Props.Create<UserCoordinatorActor>(), this.UserCoordiatorActorName);
+            Context.ActorOf(Props.Create<BrokerCoordinatorActor>(), this.BrokerCoordiatorActorName);
+            Context.ActorOf(Props.Create<TicketProviderCoordinatorActor>(), this.TicketProviderCoordinatorActorName);
         }
 
         #region Lifecycle hooks

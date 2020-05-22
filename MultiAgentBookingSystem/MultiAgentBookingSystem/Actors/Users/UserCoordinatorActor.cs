@@ -39,12 +39,9 @@ namespace MultiAgentBookingSystem.Actors
                 IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new UserActor()));
 
                 childrenActors.Add(actorId, newChildActorRef);
-
-                ColorConsole.WriteLineColor($"UserCoordinatorActor create new child userActor for {actorId} (Total Users: {childrenActors.Count}", ConsoleColor.Cyan);
             }
             else
             {
-                ColorConsole.WriteLineColor($"ERROR - exists! UserCoordinatorActor can not create new child userActor for {actorId} (Total Users: {childrenActors.Count}", ConsoleColor.Cyan);
             }
         }
 

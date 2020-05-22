@@ -102,7 +102,7 @@ namespace MultiAgentBookingSystem.Logger
         /// <param name="actorType">Actor type</param>
         /// <param name="actorPath">Actor path</param>
         /// <param name="errorMessage">Error message</param>
-        public void LogCutomError(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, string errorMessage)
+        public void LogCustomError(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, string errorMessage)
         {
             loggingAdapter.Error("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Error: {ErrorMessage}", actorType.Name, actorPath, errorMessage);
         }
@@ -114,7 +114,7 @@ namespace MultiAgentBookingSystem.Logger
         /// <param name="actorType">Actor type</param>
         /// <param name="actorPath">Actor path</param>
         /// <param name="warningMessage">Warning message</param>
-        public void LogCutomWarning(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, string warningMessage)
+        public void LogCustomWarning(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, string warningMessage)
         {
             loggingAdapter.Warning("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Warning: {WarningMessage}", actorType.Name, actorPath, warningMessage);
         }
@@ -126,7 +126,7 @@ namespace MultiAgentBookingSystem.Logger
         /// <param name="actorType">Actor type</param>
         /// <param name="actorPath">Actor path</param>
         /// <param name="infoMessage">Info message</param>
-        public void LogCutomInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, string infoMessage)
+        public void LogCustomInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, string infoMessage)
         {
             loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Info: {InfoMessage}", actorType.Name, actorPath, infoMessage);
         }
@@ -138,7 +138,7 @@ namespace MultiAgentBookingSystem.Logger
         /// <param name="actorType">Actor type</param>
         /// <param name="actorPath">Actor path</param>
         /// <param name="debugMessage">Debug message</param>
-        public void LogCutomDebug(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, string debugMessage)
+        public void LogCustomDebug(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, string debugMessage)
         {
             loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Info: {DebugMessage}", actorType.Name, actorPath, debugMessage);
         }

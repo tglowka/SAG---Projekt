@@ -2,6 +2,7 @@
 using Akka.Event;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
+using MultiAgentBookingSystem.Messages.Abstracts;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -10,7 +11,7 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class UserCoordinatorActor : ReceiveActor
     {
-        private Dictionary<string, IActorRef> childrenActors = new Dictionary<string, IActorRef>();
+        private Dictionary<Guid, IActorRef> childrenActors = new Dictionary<Guid, IActorRef>();
 
         public UserCoordinatorActor()
         {
@@ -21,22 +22,22 @@ namespace MultiAgentBookingSystem.Actors
 
         private void InitialState()
         {
-            Receive<AddUserActorMessage>(message =>
+            Receive<AddActorMessage>(message =>
             {
                 this.CreateChildActor(message.ActorId);
             });
 
-            Receive<RemoveUserActorMessage>(message =>
+            Receive<RemoveActorMessage>(message =>
             {
                 this.RemoveChildActor(message.ActorId);
             });
         }
 
-        private void CreateChildActor(string actorId)
+        private void CreateChildActor(Guid actorId)
         {
             if (!childrenActors.ContainsKey(actorId))
             {
-                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new UserActor()));
+                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new UserActor(actorId)), actorId.ToString());
 
                 childrenActors.Add(actorId, newChildActorRef);
             }
@@ -45,7 +46,7 @@ namespace MultiAgentBookingSystem.Actors
             }
         }
 
-        private void RemoveChildActor(string actorId)
+        private void RemoveChildActor(Guid actorId)
         {
             if (childrenActors.ContainsKey(actorId))
             {

@@ -13,9 +13,9 @@ namespace MultiAgentBookingSystem.Actors
 
         public SystemSupervisorActor()
         {
-            Context.ActorOf(Props.Create<UserCoordinatorActor>(), this.UserCoordiatorActorName);
-            Context.ActorOf(Props.Create<BrokerCoordinatorActor>(), this.BrokerCoordiatorActorName);
-            Context.ActorOf(Props.Create<TicketProviderCoordinatorActor>(), this.TicketProviderCoordinatorActorName);
+            Context.ActorOf(Props.Create(() => new UserCoordinatorActor()), this.UserCoordiatorActorName);
+            Context.ActorOf(Props.Create(() => new BrokerCoordinatorActor()), this.BrokerCoordiatorActorName);
+            Context.ActorOf(Props.Create(() => new TicketProviderCoordinatorActor()), this.TicketProviderCoordinatorActorName);
         }
 
         #region Lifecycle hooks

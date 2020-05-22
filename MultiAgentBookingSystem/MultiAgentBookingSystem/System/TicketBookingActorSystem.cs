@@ -15,10 +15,15 @@ namespace MultiAgentBookingSystem.System
     {
         private const string actorSystemName = "TicketBookingActorSystem";
 
-        private static readonly Lazy<ActorSystem> instance = new Lazy<ActorSystem>(() => ActorSystem.Create(actorSystemName));
-        private TicketBookingActorSystem() { }
+        public readonly ActorSystem actorSystem;
 
-        public static ActorSystem Instance
+        private static readonly Lazy<TicketBookingActorSystem> instance = new Lazy<TicketBookingActorSystem>(() => new TicketBookingActorSystem(ActorSystem.Create(actorSystemName)));
+        private TicketBookingActorSystem(ActorSystem actorSystem)
+        {
+            this.actorSystem = actorSystem;
+        }
+
+        public static TicketBookingActorSystem Instance
         {
             get
             {

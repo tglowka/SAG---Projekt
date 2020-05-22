@@ -11,8 +11,12 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class BrokerActor : ReceiveActor
     {
-        public BrokerActor()
+        private Guid Id { get; set; }
+
+        public BrokerActor(Guid id)
         {
+            this.Id = id;
+
             LoggingConfiguration.Instance.LogActorCreation(Context.GetLogger(), this.GetType(), Self.Path);
         }
 

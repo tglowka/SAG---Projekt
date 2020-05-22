@@ -15,9 +15,21 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class UserActor : ReceiveActor
     {
-        public UserActor()
+        private Guid Id { get; set; }
+
+        private string ticketRoute;
+
+        public UserActor(Guid id)
         {
+            this.Id = id;
+            this.ticketRoute = TicketsHelper.GetRandomRoute();
+
             LoggingConfiguration.Instance.LogActorCreation(Context.GetLogger(), this.GetType(), Self.Path);
+        }
+
+        private void BookTicketByBrooker()
+        {
+            //TicketBookingActorSystem.Instance.actorSystem.ActorSelection("/user/SystemSupervisor/BrokerCoordinator").Tell(new BookTicketByBrokerMessage());
         }
 
         #region Lifecycle hooks

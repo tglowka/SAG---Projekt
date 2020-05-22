@@ -6,17 +6,12 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.DataResources
 {
-    public static class TicketPossibleRoutes
+    public static class TicketsHelper
     {
         /// <summary>
         ///     Max ticket count on particular route.
         /// </summary>
         private static int singleRouteMaxCount = 10;
-
-        /// <summary>
-        ///     Random generator.
-        /// </summary>
-        private static Random random = new Random();
 
         /// <summary>
         ///     List of the possible routes that user actor is able to book.
@@ -42,7 +37,7 @@ namespace MultiAgentBookingSystem.DataResources
         /// <returns>Random route from possible routes.</returns>
         public static string GetRandomRoute()
         {
-            return possibleRoutes[random.Next(possibleRoutes.Count)];
+            return possibleRoutes[RandomGenerator.Instance.random.Next(possibleRoutes.Count)];
         }
 
         /// <summary>
@@ -55,7 +50,7 @@ namespace MultiAgentBookingSystem.DataResources
 
             for (int i = 0; i < possibleRoutes.Count; ++i)
             {
-                int offeredTicketCount = random.Next(singleRouteMaxCount);
+                int offeredTicketCount = RandomGenerator.Instance.random.Next(singleRouteMaxCount);
                 if (offeredTicketCount > 0)
                 {
                     offeredTickets.Add(possibleRoutes[i], offeredTicketCount);

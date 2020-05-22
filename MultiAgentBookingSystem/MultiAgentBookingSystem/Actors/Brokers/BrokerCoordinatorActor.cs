@@ -1,7 +1,9 @@
 ﻿using Akka.Actor;
 using Akka.Event;
+using MultiAgentBookingSystem.DataResources;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
+using MultiAgentBookingSystem.Messages.Abstracts;
 using MultiAgentBookingSystem.Messages.Brokers;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class BrokerCoordinatorActor : ReceiveActor
     {
-        private Dictionary<string, IActorRef> childrenActors = new Dictionary<string, IActorRef>();
+        private Dictionary<Guid, IActorRef> childrenActors = new Dictionary<Guid, IActorRef>();
 
         public BrokerCoordinatorActor()
         {
@@ -24,22 +26,27 @@ namespace MultiAgentBookingSystem.Actors
 
         private void InitialState()
         {
-            Receive<AddBrokerActorMessage>(message =>
+            Receive<AddActorMessage>(message =>
             {
                 this.CreateChildActor(message.ActorId);
             });
 
-            Receive<RemoveBrokerActorMessage>(message =>
+            Receive<RemoveActorMessage>(message =>
             {
                 this.RemoveChildActor(message.ActorId);
             });
+
+            Receive<BookTicketByBrokerMessage>(message =>
+            {
+                this.BookTicketByBroker(message);
+            });
         }
 
-        private void CreateChildActor(string actorId)
+        private void CreateChildActor(Guid actorId)
         {
             if (!childrenActors.ContainsKey(actorId))
             {
-                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new BrokerActor()));
+                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new BrokerActor(actorId)), actorId.ToString());
 
                 childrenActors.Add(actorId, newChildActorRef);
 
@@ -51,7 +58,7 @@ namespace MultiAgentBookingSystem.Actors
             }
         }
 
-        private void RemoveChildActor(string actorId)
+        private void RemoveChildActor(Guid actorId)
         {
             if (childrenActors.ContainsKey(actorId))
             {
@@ -67,6 +74,15 @@ namespace MultiAgentBookingSystem.Actors
             {
                 ColorConsole.WriteLineColor($"ERROR - not exists! BrokerCoordinatorActor can not remove child brokerActor for {actorId} (Total Brokers: {childrenActors.Count}", ConsoleColor.Cyan);
             }
+        }
+
+        private void BookTicketByBroker(BookTicketByBrokerMessage message)
+        {
+            // Get random broker
+            IActorRef randomBroker = this.childrenActors.ElementAt(RandomGenerator.Instance.random.Next(0, this.childrenActors.Count)).Value;
+
+            // Forward message to random broker
+            randomBroker.Forward(message);
         }
 
         #endregion

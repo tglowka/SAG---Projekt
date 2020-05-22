@@ -11,8 +11,12 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class TicketProviderActor : ReceiveActor
     {
-        public TicketProviderActor()
+        private Guid Id { get; set; }
+
+        public TicketProviderActor(Guid id)
         {
+            this.Id = id;
+
             LoggingConfiguration.Instance.LogActorCreation(Context.GetLogger(), this.GetType(), Self.Path);
         }
 

@@ -5,6 +5,7 @@ using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Abstracts;
 using MultiAgentBookingSystem.Messages.Brokers;
+using MultiAgentBookingSystem.Messages.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,12 +29,23 @@ namespace MultiAgentBookingSystem.Actors
         {
             Receive<AddActorMessage>(message =>
             {
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToString());
+
                 this.CreateChildActor(message.ActorId);
             });
 
             Receive<RemoveActorMessage>(message =>
             {
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToString());
+
                 this.RemoveChildActor(message.ActorId);
+            });
+
+            Receive<GetAllBrokersMessage>(message =>
+            {
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToString());
+
+                this.SendAllBrokers(Sender);
             });
         }
 
@@ -42,14 +54,7 @@ namespace MultiAgentBookingSystem.Actors
             if (!childrenActors.ContainsKey(actorId))
             {
                 IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new BrokerActor(actorId)), actorId.ToString());
-
                 childrenActors.Add(actorId, newChildActorRef);
-
-                ColorConsole.WriteLineColor($"BrokerCoordinatorActor create new child brokerActor for {actorId} (Total Brokers: {childrenActors.Count}", ConsoleColor.Cyan);
-            }
-            else
-            {
-                ColorConsole.WriteLineColor($"ERROR - exists! BrokerCoordinatorActor can not create new child brokerActor for {actorId} (Total Brokers: {childrenActors.Count}", ConsoleColor.Cyan);
             }
         }
 
@@ -58,17 +63,17 @@ namespace MultiAgentBookingSystem.Actors
             if (childrenActors.ContainsKey(actorId))
             {
                 IActorRef childActorRef = childrenActors[actorId];
-
                 childActorRef.Tell(PoisonPill.Instance);
-
                 childrenActors.Remove(actorId);
+            }
+        }
 
-                ColorConsole.WriteLineColor($"BrokerCoordinatorActor remove child brokerActor for {actorId} (Total Brokers: {childrenActors.Count}", ConsoleColor.Cyan);
-            }
-            else
-            {
-                ColorConsole.WriteLineColor($"ERROR - not exists! BrokerCoordinatorActor can not remove child brokerActor for {actorId} (Total Brokers: {childrenActors.Count}", ConsoleColor.Cyan);
-            }
+        private void SendAllBrokers(IActorRef sender)
+        {
+            ReceiveAllBrokers receiveAllBrokersMessage = new ReceiveAllBrokers(this.childrenActors);
+
+            sender.Tell(receiveAllBrokersMessage);
+            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, receiveAllBrokersMessage.GetType(), sender.Path.ToString());
         }
 
         #endregion

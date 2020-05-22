@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Event;
 using MultiAgentBookingSystem.Logger;
+using MultiAgentBookingSystem.Messages.Brokers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +18,18 @@ namespace MultiAgentBookingSystem.Actors
         {
             this.Id = id;
 
+            Become(InitialState);
+
             LoggingConfiguration.Instance.LogActorCreation(Context.GetLogger(), this.GetType(), Self.Path);
         }
+
+        #region private methods
+
+        private void InitialState()
+        {
+        }
+
+        #endregion
 
         #region Lifecycle hooks
 

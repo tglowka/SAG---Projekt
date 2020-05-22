@@ -142,5 +142,17 @@ namespace MultiAgentBookingSystem.Logger
         {
             loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Info: {DebugMessage}", actorType.Name, actorPath, debugMessage);
         }
+
+        /// <summary>
+        ///     Log custom debug message.
+        /// </summary>
+        /// <param name="loggingAdapter">Logging adapter</param>
+        /// <param name="actorType">Actor type</param>
+        /// <param name="actorPath">Actor path</param>
+        /// <param name="messageType">Message type</param>
+        public void LogReceiveMessageInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, Type messageType)
+        {
+            loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Info: Received {MessageType}", actorType.Name, actorPath, messageType.Name);
+        }
     }
 }

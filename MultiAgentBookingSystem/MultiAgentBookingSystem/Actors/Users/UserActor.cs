@@ -4,6 +4,7 @@ using MultiAgentBookingSystem.DataResources;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Brokers;
+using MultiAgentBookingSystem.Messages.Users;
 using MultiAgentBookingSystem.System;
 using System;
 using System.Collections.Generic;
@@ -15,22 +16,63 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class UserActor : ReceiveActor
     {
-        private Guid Id { get; set; }
+        private Guid id;
+        private Dictionary<Guid, IActorRef> brokers = new Dictionary<Guid, IActorRef>();
 
         private string ticketRoute;
 
         public UserActor(Guid id)
         {
-            this.Id = id;
+            this.id = id;
             this.ticketRoute = TicketsHelper.GetRandomRoute();
+
+            Context.SetReceiveTimeout(TimeSpan.FromSeconds(3));
+
+            Become(InitialState);
+
+            this.BookTicketByBrooker();
 
             LoggingConfiguration.Instance.LogActorCreation(Context.GetLogger(), this.GetType(), Self.Path);
         }
 
+        #region private methods
+
+        private void InitialState()
+        {
+            Receive<ReceiveTimeout>(message =>
+            {
+                this.GetAllBrokers();
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType());
+            });
+
+            Receive<ReceiveAllBrokers>(message =>
+            {
+                this.brokers = message.brokers;
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType());
+            });
+        }
+
+        private void GetAllBrokers()
+        {
+            TicketBookingActorSystem.Instance.actorSystem.ActorSelection("/user/SystemSupervisor/BrokerCoordinator").Tell(new GetAllBrokersMessage());
+        }
+
         private void BookTicketByBrooker()
         {
-            //TicketBookingActorSystem.Instance.actorSystem.ActorSelection("/user/SystemSupervisor/BrokerCoordinator").Tell(new BookTicketByBrokerMessage());
+            if (brokers.Count > 0)
+            {
+                // Get random broker from known brokers
+                IActorRef randomBroker = this.brokers.ElementAt(RandomGenerator.Instance.random.Next(0, this.brokers.Count)).Value;
+
+                randomBroker.Tell(new BookTicketByBrokerMessage(this.id, this.ticketRoute));
+            }
+            else
+            {
+                this.GetAllBrokers();
+            }
         }
+
+        #endregion
 
         #region Lifecycle hooks
 

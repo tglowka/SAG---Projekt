@@ -117,8 +117,9 @@
     <Compile Include="Messages\Brokers\BookTicketByBrokerMessage.cs" />
     <Compile Include="Messages\Common\AddActorMessage.cs" />
     <Compile Include="Messages\Common\RemoveActorMessage.cs" />
-    <Compile Include="Messages\Users\GetAllBrokersMessage.cs" />
+    <Compile Include="Messages\Brokers\GetAllBrokersMessage.cs" />
     <Compile Include="Messages\IncrementSoldTicketsAmount.cs" />
+    <Compile Include="Messages\Users\ReceiveAllBrokers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System\TicketBookingActorSystem.cs" />

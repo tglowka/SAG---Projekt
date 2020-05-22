@@ -9,7 +9,6 @@ namespace MultiAgentBookingSystem.Messages.Brokers
 {
     public class GetAllBrokersMessage
     {
-
         public GetAllBrokersMessage()
         {
         }

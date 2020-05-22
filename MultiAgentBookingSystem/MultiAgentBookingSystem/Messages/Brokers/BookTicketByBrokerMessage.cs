@@ -8,11 +8,13 @@ namespace MultiAgentBookingSystem.Messages.Brokers
 {
     public class BookTicketByBrokerMessage
     {
-        private Guid userActorId;
+        public Guid UserActorId { get; private set; }
+        public string TicketRoute { get; private set; }
 
-        public BookTicketByBrokerMessage(Guid userActorId)
+        public BookTicketByBrokerMessage(Guid userActorId, string ticketRoute)
         {
-            this.userActorId = userActorId;
+            this.UserActorId = userActorId;
+            this.TicketRoute = ticketRoute;
         }
     }
 }

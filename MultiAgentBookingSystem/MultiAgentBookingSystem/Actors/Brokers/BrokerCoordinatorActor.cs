@@ -35,11 +35,6 @@ namespace MultiAgentBookingSystem.Actors
             {
                 this.RemoveChildActor(message.ActorId);
             });
-
-            Receive<BookTicketByBrokerMessage>(message =>
-            {
-                this.BookTicketByBroker(message);
-            });
         }
 
         private void CreateChildActor(Guid actorId)
@@ -74,15 +69,6 @@ namespace MultiAgentBookingSystem.Actors
             {
                 ColorConsole.WriteLineColor($"ERROR - not exists! BrokerCoordinatorActor can not remove child brokerActor for {actorId} (Total Brokers: {childrenActors.Count}", ConsoleColor.Cyan);
             }
-        }
-
-        private void BookTicketByBroker(BookTicketByBrokerMessage message)
-        {
-            // Get random broker
-            IActorRef randomBroker = this.childrenActors.ElementAt(RandomGenerator.Instance.random.Next(0, this.childrenActors.Count)).Value;
-
-            // Forward message to random broker
-            randomBroker.Forward(message);
         }
 
         #endregion

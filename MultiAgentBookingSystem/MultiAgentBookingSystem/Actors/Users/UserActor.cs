@@ -28,17 +28,17 @@ namespace MultiAgentBookingSystem.Actors
             this.id = id;
             this.ticketRoute = TicketsHelper.GetRandomRoute();
 
-            Context.SetReceiveTimeout(TimeSpan.FromSeconds(3));
-
-            Become(InitialState);
-
-            this.BookTicketByBroker();
+            Become(LookingForBrokersState);
         }
 
         #region private methods
 
-        private void InitialState()
+        private void LookingForBrokersState()
         {
+            Context.SetReceiveTimeout(TimeSpan.FromSeconds(3));
+
+            this.GetAllBrokers();
+
             Receive<ReceiveTimeout>(message =>
             {
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
@@ -51,12 +51,17 @@ namespace MultiAgentBookingSystem.Actors
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
                 this.brokers = new Dictionary<Guid, IActorRef>(message.brokers);
-                this.BookTicketByBroker();
+
+                Become(BookingTicketState);
             });
         }
 
         private void BookingTicketState()
         {
+            Context.SetReceiveTimeout(TimeSpan.FromSeconds(5));
+
+            this.BookTicketByBroker();
+
             Receive<ReceiveTimeout>(message =>
             {
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
@@ -81,7 +86,7 @@ namespace MultiAgentBookingSystem.Actors
         /// <summary>
         ///     Send BookTicketByBrokerMessage message to random known broker. If there is no known broker, send message to BrokerCoordinator to get them.
         /// </summary>
-        private void BookTicketByBroker()
+        private void BookTicketByBroker(ReceiveAllBrokers message = null)
         {
             if (this.brokers?.Count > 0)
             {
@@ -93,14 +98,11 @@ namespace MultiAgentBookingSystem.Actors
                 BookTicketByBrokerMessage bookTicketByBrokerMessage = new BookTicketByBrokerMessage(this.id, this.ticketRoute);
                 randomBrokerActor.Tell(bookTicketByBrokerMessage);
 
-                Become(BookingTicketState);
-
                 LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, bookTicketByBrokerMessage.GetType(), randomBrokerActor.Path.ToStringWithoutAddress());
             }
             else
             {
-                this.GetAllBrokers();
-                Become(InitialState);
+                Become(LookingForBrokersState);
             }
         }
 

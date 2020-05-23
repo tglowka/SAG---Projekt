@@ -66,7 +66,10 @@ namespace MultiAgentBookingSystem.Actors
             {
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                this.BookTicketByBroker();
+                if (this.brokers?.Count > 0)
+                    this.BookTicketByBroker();
+                else
+                    Become(LookingForBrokersState);
             });
         }
 
@@ -86,24 +89,17 @@ namespace MultiAgentBookingSystem.Actors
         /// <summary>
         ///     Send BookTicketByBrokerMessage message to random known broker. If there is no known broker, send message to BrokerCoordinator to get them.
         /// </summary>
-        private void BookTicketByBroker(ReceiveAllBrokers message = null)
+        private void BookTicketByBroker()
         {
-            if (this.brokers?.Count > 0)
-            {
-                // Get random broker from known brokers and remove him from known brokers.
-                Guid randomBroker = this.brokers.ElementAt(RandomGenerator.Instance.random.Next(0, this.brokers.Count)).Key;
-                IActorRef randomBrokerActor = this.brokers[randomBroker];
-                this.brokers.Remove(randomBroker);
+            // Get random broker from known brokers and remove him from known brokers.
+            Guid randomBroker = this.brokers.ElementAt(RandomGenerator.Instance.random.Next(0, this.brokers.Count)).Key;
+            IActorRef randomBrokerActor = this.brokers[randomBroker];
+            this.brokers.Remove(randomBroker);
 
-                BookTicketByBrokerMessage bookTicketByBrokerMessage = new BookTicketByBrokerMessage(this.id, this.ticketRoute);
-                randomBrokerActor.Tell(bookTicketByBrokerMessage);
+            BookTicketByBrokerMessage bookTicketByBrokerMessage = new BookTicketByBrokerMessage(this.id, this.ticketRoute);
+            randomBrokerActor.Tell(bookTicketByBrokerMessage);
 
-                LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, bookTicketByBrokerMessage.GetType(), randomBrokerActor.Path.ToStringWithoutAddress());
-            }
-            else
-            {
-                Become(LookingForBrokersState);
-            }
+            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, bookTicketByBrokerMessage.GetType(), randomBrokerActor.Path.ToStringWithoutAddress());
         }
 
         #endregion

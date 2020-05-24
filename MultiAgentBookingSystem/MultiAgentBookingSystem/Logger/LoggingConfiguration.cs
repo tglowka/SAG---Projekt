@@ -60,7 +60,7 @@ namespace MultiAgentBookingSystem.Logger
         /// <param name="actorPath">Actor path</param>
         public void LogActorPreStart(ILoggingAdapter loggingAdapter, ActorPath actorPath)
         {
-            loggingAdapter.Debug("Prestart: {ActorPath}", actorPath.ToStringWithoutAddress());
+            //    loggingAdapter.Debug("Prestart: {ActorPath}", actorPath.ToStringWithoutAddress());
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace MultiAgentBookingSystem.Logger
         /// <param name="actorPath">Actor path</param>
         public void LogActorPostStop(ILoggingAdapter loggingAdapter, ActorPath actorPath)
         {
-            loggingAdapter.Debug("PostStop: {ActorPath}", actorPath.ToStringWithoutAddress());
+            //      loggingAdapter.Debug("PostStop: {ActorPath}", actorPath.ToStringWithoutAddress());
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace MultiAgentBookingSystem.Logger
         /// <param name="exception">Exception</param>
         public void LogActorPreRestart(ILoggingAdapter loggingAdapter, ActorPath actorPath, Exception exception)
         {
-            loggingAdapter.Debug("PreRestart: {ActorPath}. Exception: {Exception}", actorPath.ToStringWithoutAddress(), exception);
+            //     loggingAdapter.Debug("PreRestart: {ActorPath}. Exception: {Exception}", actorPath.ToStringWithoutAddress(), exception);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace MultiAgentBookingSystem.Logger
         /// <param name="exception">Exception</param>
         public void LogActorPostRestart(ILoggingAdapter loggingAdapter, ActorPath actorPath, Exception exception)
         {
-            loggingAdapter.Debug("PostRestart: {ActorPath}. Exception: {Exception}", actorPath.ToStringWithoutAddress(), exception);
+            //  loggingAdapter.Debug("PostRestart: {ActorPath}. Exception: {Exception}", actorPath.ToStringWithoutAddress(), exception);
         }
 
         /// <summary>
@@ -167,6 +167,19 @@ namespace MultiAgentBookingSystem.Logger
         public void LogSendMessageInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, Type messageType, string to)
         {
             loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Send: {MessageType}, To: {To}", actorType.Name, actorPath.ToStringWithoutAddress(), messageType.Name, to);
+        }
+
+        /// <summary>
+        ///     Log ticket booking event.
+        /// </summary>
+        /// <param name="loggingAdapter">Logging adapter</param>
+        /// <param name="actorType">Actor type</param>
+        /// <param name="actorPath">ACtor path</param>
+        /// <param name="bookedTicketRoute">Booked ticket's route</param>
+        /// <param name="userActorId">User actor id</param>
+        public void LogTicketProviderBookingMessageInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, string bookedTicketRoute, Guid userActorId)
+        {
+            loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Booked: {BookedTicketRoute}, For: {BookedTicketOwner}", actorType.Name, actorPath.ToStringWithoutAddress(), bookedTicketRoute, userActorId);
         }
     }
 }

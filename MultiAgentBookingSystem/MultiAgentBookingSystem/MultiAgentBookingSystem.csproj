@@ -115,10 +115,13 @@
     <Compile Include="DataResources\TicketsHelper.cs" />
     <Compile Include="Logger\LoggingConfiguration.cs" />
     <Compile Include="Messages\Brokers\BookTicketByBrokerMessage.cs" />
+    <Compile Include="Messages\Brokers\TicketProviderConfirmationMessage.cs" />
+    <Compile Include="Messages\Brokers\TicketProviderResponseMessage.cs" />
     <Compile Include="Messages\Common\AddActorMessage.cs" />
     <Compile Include="Messages\Common\RemoveActorMessage.cs" />
     <Compile Include="Messages\Brokers\GetAllBrokersMessage.cs" />
-    <Compile Include="Messages\IncrementSoldTicketsAmount.cs" />
+    <Compile Include="Messages\TicketProviders\BookTicketMessage.cs" />
+    <Compile Include="Messages\TicketProviders\NotifyTicketProvidersMessage.cs" />
     <Compile Include="Messages\Users\ReceiveAllBrokers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -128,8 +131,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Messages\TicketProviders\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -29,21 +29,21 @@ namespace MultiAgentBookingSystem.Actors
         {
             Receive<AddActorMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToString());
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
                 this.CreateChildActor(message.ActorId);
             });
 
             Receive<RemoveActorMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToString());
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
                 this.RemoveChildActor(message.ActorId);
             });
 
             Receive<GetAllBrokersMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToString());
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
                 this.SendAllBrokers(Sender);
             });
@@ -73,7 +73,7 @@ namespace MultiAgentBookingSystem.Actors
             ReceiveAllBrokers receiveAllBrokersMessage = new ReceiveAllBrokers(this.childrenActors);
 
             sender.Tell(receiveAllBrokersMessage);
-            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, receiveAllBrokersMessage.GetType(), sender.Path.ToString());
+            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, receiveAllBrokersMessage.GetType(), sender.Path.ToStringWithoutAddress());
         }
 
         #endregion

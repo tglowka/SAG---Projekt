@@ -28,6 +28,9 @@ namespace MultiAgentBookingSystem.Actors
             this.id = id;
             this.ticketRoute = TicketsHelper.GetRandomRoute();
 
+            Console.WriteLine("ROUTE: {0}", ticketRoute);
+
+
             Become(LookingForBrokersState);
         }
 
@@ -70,6 +73,15 @@ namespace MultiAgentBookingSystem.Actors
                     this.BookTicketByBroker();
                 else
                     Become(LookingForBrokersState);
+            });
+
+            Receive<TicketProviderConfirmationMessage>(message =>
+            {
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+
+                Console.WriteLine($"User: {this.id} has booked ticket {this.ticketRoute}.");
+
+                Context.Stop(Self);
             });
         }
 

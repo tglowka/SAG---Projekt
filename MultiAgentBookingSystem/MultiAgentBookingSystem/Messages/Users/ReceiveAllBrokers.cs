@@ -12,7 +12,7 @@ namespace MultiAgentBookingSystem.Messages.Users
         public Dictionary<Guid, IActorRef> brokers { get; private set; }
         public ReceiveAllBrokers(Dictionary<Guid, IActorRef> brokers)
         {
-            this.brokers = brokers;
+            this.brokers = new Dictionary<Guid, IActorRef>(brokers);
         }
     }
 }

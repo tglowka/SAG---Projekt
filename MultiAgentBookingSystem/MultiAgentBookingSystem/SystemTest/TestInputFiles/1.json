@@ -17,8 +17,8 @@
       "MaxCount": 50
     },
     "BrokerActor": {
-      "MinCount": 1,
-      "MaxCount": 5
+      "MinCount": 100,
+      "MaxCount": 150
     },
     "TicketProviderActor": {
       "MinCount": 1,

@@ -1,8 +1,10 @@
 ﻿using Akka.Actor;
 using Akka.Event;
+using MultiAgentBookingSystem.DataResources;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Abstracts;
+using MultiAgentBookingSystem.Messages.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,34 +22,60 @@ namespace MultiAgentBookingSystem.Actors
             this.Become(this.InitialState);
         }
 
+        public TicketProviderCoordinatorActor(int childCount)
+        {
+            this.CreateChildActor(childCount);
+
+            this.Become(this.InitialState);
+        }
+
         #region private methods
 
         private void InitialState()
         {
             Receive<AddActorMessage>(message =>
             {
-                this.CreateChildActor(message.ActorId);
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+
+                this.CreateChildActor(message.ActorCount);
+            });
+
+            Receive<AddRandomCountActorMessage>(message =>
+            {
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+
+                this.CreateChildActor(message.MinActorCount, message.MaxActorCount);
             });
 
             Receive<RemoveActorMessage>(message =>
             {
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+
                 this.RemoveChildActor(message.ActorId);
             });
         }
 
-        private void CreateChildActor(Guid actorId)
+        private void CreateChildActor(int actorCount = 1)
         {
-            if (!childrenActors.ContainsKey(actorId))
+            for (int i = 0; i < actorCount; i++)
             {
-                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new TicketProviderActor(actorId)), actorId.ToString());
+                Guid newActorId = Guid.NewGuid();
 
-                childrenActors.Add(actorId, newChildActorRef);
-
-                ColorConsole.WriteLineColor($"TicketProviderCoordinatorActor create new child TicketProviderActor for {actorId} (Total TicketProviders: {childrenActors.Count}", ConsoleColor.Cyan);
+                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new TicketProviderActor(newActorId)), newActorId.ToString());
+                childrenActors.Add(newActorId, newChildActorRef);
             }
-            else
+        }
+
+        private void CreateChildActor(int minCount, int maxCount)
+        {
+            int actorCount = RandomGenerator.Instance.random.Next(minCount, maxCount + 1);
+
+            for (int i = 0; i < actorCount; i++)
             {
-                ColorConsole.WriteLineColor($"ERROR - exists! TicketProviderCoordinatorActor can not create new child TicketProviderActor for {actorId} (Total TicketProviders: {childrenActors.Count}", ConsoleColor.Cyan);
+                Guid newActorId = Guid.NewGuid();
+
+                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new TicketProviderActor(newActorId)), newActorId.ToString());
+                childrenActors.Add(newActorId, newChildActorRef);
             }
         }
 

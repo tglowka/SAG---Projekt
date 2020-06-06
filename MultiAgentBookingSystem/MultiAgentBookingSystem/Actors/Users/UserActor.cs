@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Event;
 using MultiAgentBookingSystem.DataResources;
+using MultiAgentBookingSystem.Exceptions;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Brokers;
@@ -28,8 +29,7 @@ namespace MultiAgentBookingSystem.Actors
             this.id = id;
             this.ticketRoute = TicketsHelper.GetRandomRoute();
 
-            Console.WriteLine("ROUTE: {0}", ticketRoute);
-
+            //Console.WriteLine("ROUTE: {0}", ticketRoute);
 
             Become(LookingForBrokersState);
         }
@@ -79,7 +79,7 @@ namespace MultiAgentBookingSystem.Actors
             {
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                Console.WriteLine($"User: {this.id} has booked ticket {this.ticketRoute}.");
+                //Console.WriteLine($"User: {this.id} has booked ticket {this.ticketRoute}.");
 
                 Context.Stop(Self);
             });
@@ -125,7 +125,8 @@ namespace MultiAgentBookingSystem.Actors
 
         protected override void PostStop()
         {
-            LoggingConfiguration.Instance.LogActorPostStop(Context.GetLogger(), Self.Path);
+            //LoggingConfiguration.Instance.LogActorPostStop(Context.GetLogger(), Self.Path);
+            LoggingConfiguration.Instance.LogActorStop(Context.GetLogger(), this.GetType(), Self.Path);
         }
 
         protected override void PreRestart(Exception reason, object message)

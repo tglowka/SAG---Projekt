@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Messages.Abstracts
 {
-    public  class AddActorMessage
+    public class AddActorMessage
     {
-        public Guid ActorId { get; private set; }
+        public int ActorCount { get; private set; }
 
-        public AddActorMessage(Guid actorId)
+        public AddActorMessage(int actorCount)
         {
-            this.ActorId = actorId;
+            this.ActorCount = actorCount;
         }
     }
 }

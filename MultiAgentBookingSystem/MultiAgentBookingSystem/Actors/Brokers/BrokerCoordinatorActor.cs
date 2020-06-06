@@ -5,6 +5,7 @@ using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Abstracts;
 using MultiAgentBookingSystem.Messages.Brokers;
+using MultiAgentBookingSystem.Messages.Common;
 using MultiAgentBookingSystem.Messages.Users;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,12 @@ namespace MultiAgentBookingSystem.Actors
         {
             this.Become(this.InitialState);
         }
+        public BrokerCoordinatorActor(int childCount)
+        {
+            this.CreateChildActor(childCount);
+
+            this.Become(this.InitialState);
+        }
 
         #region private methods
 
@@ -31,7 +38,14 @@ namespace MultiAgentBookingSystem.Actors
             {
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                this.CreateChildActor(message.ActorId);
+                this.CreateChildActor(message.ActorCount);
+            });
+
+            Receive<AddRandomCountActorMessage>(message =>
+            {
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+
+                this.CreateChildActor(message.MinActorCount, message.MaxActorCount);
             });
 
             Receive<RemoveActorMessage>(message =>
@@ -49,12 +63,27 @@ namespace MultiAgentBookingSystem.Actors
             });
         }
 
-        private void CreateChildActor(Guid actorId)
+        private void CreateChildActor(int actorCount = 1)
         {
-            if (!childrenActors.ContainsKey(actorId))
+            for (int i = 0; i < actorCount; i++)
             {
-                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new BrokerActor(actorId)), actorId.ToString());
-                childrenActors.Add(actorId, newChildActorRef);
+                Guid newActorId = Guid.NewGuid();
+
+                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new BrokerActor(newActorId)), newActorId.ToString());
+                childrenActors.Add(newActorId, newChildActorRef);
+            }
+        }
+
+        private void CreateChildActor(int minCount, int maxCount)
+        {
+            int actorCount = RandomGenerator.Instance.random.Next(minCount, maxCount + 1);
+
+            for (int i = 0; i < actorCount; i++)
+            {
+                Guid newActorId = Guid.NewGuid();
+
+                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new BrokerActor(newActorId)), newActorId.ToString());
+                childrenActors.Add(newActorId, newChildActorRef);
             }
         }
 

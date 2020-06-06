@@ -16,6 +16,11 @@ namespace MultiAgentBookingSystem.Logger
     public sealed class LoggingConfiguration
     {
         private static readonly Lazy<LoggingConfiguration> instance = new Lazy<LoggingConfiguration>(() => new LoggingConfiguration());
+        private enum CustomTypes
+        {
+            Creation ,
+            Stop
+        };
 
         private LoggingConfiguration() { }
 
@@ -50,7 +55,29 @@ namespace MultiAgentBookingSystem.Logger
         /// <param name="actorPath">Actor path</param>
         public void LogActorCreation(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath)
         {
-            loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath} has been created", actorType.Name, actorPath.ToStringWithoutAddress());
+            loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, EVENT: {CustomEvent} ", actorType.Name, actorPath.ToStringWithoutAddress(), CustomTypes.Creation.ToString("g"));
+        }
+
+        /// <summary>
+        ///     Create actor stop info log.
+        /// </summary>
+        /// <param name="loggingAdapter">Logging adapter</param>
+        /// <param name="actorType">Actor type</param>
+        /// <param name="actorPath">Actor path</param>
+        public void LogActorStop(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath)
+        {
+            loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, EVENT: {CustomEvent} ", actorType.Name, actorPath.ToStringWithoutAddress(), CustomTypes.Stop.ToString("g"));
+        }
+
+        /// <summary>
+        ///     Create actor count info log.
+        /// </summary>
+        /// <param name="loggingAdapter">Logging adapter</param>
+        /// <param name="actorType">Actor type</param>
+        /// <param name="actorPath">Actor path</param>
+        public void LogActorCount(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, int childActorCount)
+        {
+            loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath},  CHILD ACTOR COUNT: {ChildActorCount} ", actorType.Name, actorPath.ToStringWithoutAddress(), childActorCount);
         }
 
         /// <summary>

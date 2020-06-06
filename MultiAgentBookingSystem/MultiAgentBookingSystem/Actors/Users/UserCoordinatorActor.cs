@@ -1,8 +1,12 @@
 ﻿using Akka.Actor;
 using Akka.Event;
+using MultiAgentBookingSystem.DataResources;
+using MultiAgentBookingSystem.Exceptions;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Abstracts;
+using MultiAgentBookingSystem.Messages.Common;
+using MultiAgentBookingSystem.System;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -18,31 +22,60 @@ namespace MultiAgentBookingSystem.Actors
             this.Become(this.InitialState);
         }
 
+        public UserCoordinatorActor(int childCount)
+        {
+            this.CreateChildActor(childCount);
+
+            this.Become(this.InitialState);
+        }
+
         #region private methods
 
         private void InitialState()
         {
             Receive<AddActorMessage>(message =>
             {
-                this.CreateChildActor(message.ActorId);
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+
+                this.CreateChildActor(message.ActorCount);
+            });
+
+            Receive<AddRandomCountActorMessage>(message =>
+            {
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+
+                this.CreateChildActor(message.MinActorCount, message.MaxActorCount);
             });
 
             Receive<RemoveActorMessage>(message =>
             {
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+
                 this.RemoveChildActor(message.ActorId);
             });
         }
 
-        private void CreateChildActor(Guid actorId)
+        private void CreateChildActor(int actorCount = 1)
         {
-            if (!childrenActors.ContainsKey(actorId))
+            for (int i = 0; i < actorCount; i++)
             {
-                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new UserActor(actorId)), actorId.ToString());
+                Guid newActorId = Guid.NewGuid();
 
-                childrenActors.Add(actorId, newChildActorRef);
+                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new UserActor(newActorId)), newActorId.ToString());
+                childrenActors.Add(newActorId, newChildActorRef);
             }
-            else
+        }
+
+        private void CreateChildActor(int minCount, int maxCount)
+        {
+            int actorCount = RandomGenerator.Instance.random.Next(minCount, maxCount + 1);
+
+            for (int i = 0; i < actorCount; i++)
             {
+                Guid newActorId = Guid.NewGuid();
+
+                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new UserActor(newActorId)), newActorId.ToString());
+                childrenActors.Add(newActorId, newChildActorRef);
             }
         }
 
@@ -62,6 +95,35 @@ namespace MultiAgentBookingSystem.Actors
             {
                 ColorConsole.WriteLineColor($"ERROR - not exists! UserCoordinatorActor can not remove child userActor for {actorId} (Total Users: {childrenActors.Count}", ConsoleColor.Cyan);
             }
+        }
+
+        #endregion
+
+        #region protected methods
+        protected override SupervisorStrategy SupervisorStrategy()
+        {
+            return new OneForOneStrategy(
+                null,
+                null,
+                localOnlyDecider: ex =>
+                {
+                    switch (ex)
+                    {
+                        case ArithmeticException ae:
+                            return Directive.Resume;
+                        case NullReferenceException nre:
+                            return Directive.Restart;
+                        case ArgumentException are:
+                            Console.WriteLine("EEEEEEEERRRRRRRRRRROOOOOOOOORRRRRRRRRRRRRRRRRRR");
+                            UserActorStopException userActorStopException = ex as UserActorStopException;
+                            this.childrenActors.Remove(userActorStopException.Id);
+                            return Directive.Stop;
+                        default:
+                            return Directive.Escalate;
+                    }
+
+                    return Akka.Actor.SupervisorStrategy.DefaultStrategy.Decider.Decide(ex);
+                });
         }
 
         #endregion

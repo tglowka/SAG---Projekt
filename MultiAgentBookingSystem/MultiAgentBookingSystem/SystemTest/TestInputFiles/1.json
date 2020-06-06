@@ -1,0 +1,28 @@
+{
+  "InitialActorCount": {
+    "UserActor": 1000,
+    "BrokerActor": 400,
+    "TicketProviderActor": 50
+  },
+
+  "NewActorMessageInterval": {
+    "UserActor": 1,
+    "BrokerActor": 1,
+    "TicketProviderActor": 1
+  },
+
+  "NewActorCount": {
+    "UserActor": {
+      "MinCount": 10,
+      "MaxCount": 50
+    },
+    "BrokerActor": {
+      "MinCount": 1,
+      "MaxCount": 5
+    },
+    "TicketProviderActor": {
+      "MinCount": 1,
+      "MaxCount": 5
+    }
+  }
+}

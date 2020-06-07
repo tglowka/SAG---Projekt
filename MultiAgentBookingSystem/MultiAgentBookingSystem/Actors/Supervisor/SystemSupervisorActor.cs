@@ -47,44 +47,55 @@ namespace MultiAgentBookingSystem.Actors
 
         private void SetupNewActorCreateScheduler(InputFile inputFile)
         {
+            int minCount, maxCount;
+
             int interval = inputFile.NewActorMessageInterval.UserActor;
-            int minCount = inputFile.NewActorCount.UserActor.MinCount;
-            int maxCount = inputFile.NewActorCount.UserActor.MaxCount;
+            if (interval > 0)
+            {
+                minCount = inputFile.NewActorCount.UserActor.MinCount;
+                maxCount = inputFile.NewActorCount.UserActor.MaxCount;
 
-            AddRandomCountActorMessage addUserActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
+                AddRandomCountActorMessage addUserActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
 
-            TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
-                TimeSpan.FromSeconds(0),
-                TimeSpan.FromSeconds(interval),
-                this.UserCoordinatorActor,
-                addUserActorMessage,
-                Self);
+                TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
+                    TimeSpan.FromSeconds(0),
+                    TimeSpan.FromSeconds(interval),
+                    this.UserCoordinatorActor,
+                    addUserActorMessage,
+                    Self);
+            }
 
             interval = inputFile.NewActorMessageInterval.BrokerActor;
-            minCount = inputFile.NewActorCount.BrokerActor.MinCount;
-            maxCount = inputFile.NewActorCount.BrokerActor.MaxCount;
+            if (interval > 0)
+            {
+                minCount = inputFile.NewActorCount.BrokerActor.MinCount;
+                maxCount = inputFile.NewActorCount.BrokerActor.MaxCount;
 
-            AddRandomCountActorMessage addBrokerActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
+                AddRandomCountActorMessage addBrokerActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
 
-            TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
-                TimeSpan.FromSeconds(0),
-                TimeSpan.FromSeconds(interval),
-                this.BrokerCoordinatorActor,
-                addBrokerActorMessage,
-                Self);
+                TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
+                    TimeSpan.FromSeconds(0),
+                    TimeSpan.FromSeconds(interval),
+                    this.BrokerCoordinatorActor,
+                    addBrokerActorMessage,
+                    Self);
+            }
 
             interval = inputFile.NewActorMessageInterval.TicketProviderActor;
-            minCount = inputFile.NewActorCount.TicketProviderActor.MinCount;
-            maxCount = inputFile.NewActorCount.TicketProviderActor.MaxCount;
+            if (interval > 0)
+            {
+                minCount = inputFile.NewActorCount.TicketProviderActor.MinCount;
+                maxCount = inputFile.NewActorCount.TicketProviderActor.MaxCount;
 
-            AddRandomCountActorMessage addTicketProviderActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
+                AddRandomCountActorMessage addTicketProviderActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
 
-            TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
-                TimeSpan.FromSeconds(0),
-                TimeSpan.FromSeconds(interval),
-                this.TicketProviderCoordinatorActor,
-                addTicketProviderActorMessage,
-                Self);
+                TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
+                    TimeSpan.FromSeconds(0),
+                    TimeSpan.FromSeconds(interval),
+                    this.TicketProviderCoordinatorActor,
+                    addTicketProviderActorMessage,
+                    Self);
+            }
         }
 
         #endregion

@@ -1,28 +1,28 @@
 {
   "InitialActorCount": {
     "UserActor": 1000,
-    "BrokerActor": 400,
-    "TicketProviderActor": 50
+    "BrokerActor": 5,
+    "TicketProviderActor": 500
   },
 
   "NewActorMessageInterval": {
-    "UserActor": 1,
-    "BrokerActor": 1,
-    "TicketProviderActor": 1
+    "UserActor": 0,
+    "BrokerActor": 0,
+    "TicketProviderActor": 0
   },
 
   "NewActorCount": {
     "UserActor": {
-      "MinCount": 10,
-      "MaxCount": 50
+      "MinCount": 0,
+      "MaxCount": 0
     },
     "BrokerActor": {
-      "MinCount": 100,
-      "MaxCount": 150
+      "MinCount": 0,
+      "MaxCount": 0
     },
     "TicketProviderActor": {
-      "MinCount": 1,
-      "MaxCount": 5
+      "MinCount": 0,
+      "MaxCount": 0
     }
   }
 }

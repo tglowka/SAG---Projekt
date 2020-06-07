@@ -62,7 +62,7 @@ namespace MultiAgentBookingSystem.Actors
                 Guid newActorId = Guid.NewGuid();
 
                 IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new UserActor(newActorId)), newActorId.ToString());
-                childrenActors.Add(newActorId, newChildActorRef);
+                this.childrenActors.Add(newActorId, newChildActorRef);
             }
         }
 
@@ -75,25 +75,25 @@ namespace MultiAgentBookingSystem.Actors
                 Guid newActorId = Guid.NewGuid();
 
                 IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new UserActor(newActorId)), newActorId.ToString());
-                childrenActors.Add(newActorId, newChildActorRef);
+                this.childrenActors.Add(newActorId, newChildActorRef);
             }
         }
 
         private void RemoveChildActor(Guid actorId)
         {
-            if (childrenActors.ContainsKey(actorId))
+            if (this.childrenActors.ContainsKey(actorId))
             {
-                IActorRef childActorRef = childrenActors[actorId];
+                IActorRef childActorRef = this.childrenActors[actorId];
 
                 childActorRef.Tell(PoisonPill.Instance);
 
-                childrenActors.Remove(actorId);
+                this.childrenActors.Remove(actorId);
 
-                ColorConsole.WriteLineColor($"UserCoordinatorActor remove child userActor for {actorId} (Total Users: {childrenActors.Count}", ConsoleColor.Cyan);
+                ColorConsole.WriteLineColor($"UserCoordinatorActor remove child userActor for {actorId} (Total Users: {this.childrenActors.Count}", ConsoleColor.Cyan);
             }
             else
             {
-                ColorConsole.WriteLineColor($"ERROR - not exists! UserCoordinatorActor can not remove child userActor for {actorId} (Total Users: {childrenActors.Count}", ConsoleColor.Cyan);
+                ColorConsole.WriteLineColor($"ERROR - not exists! UserCoordinatorActor can not remove child userActor for {actorId} (Total Users: {this.childrenActors.Count}", ConsoleColor.Cyan);
             }
         }
 

@@ -58,7 +58,7 @@ namespace MultiAgentBookingSystem.Actors
         }
 
         /// <summary>
-        ///     Notify the broker about ticket availability.
+        ///     Notify the broker about ticket availability. If there is no such a ticket, it will be added.
         /// </summary>
         /// <param name="userActorId">User actor id</param>
         /// <param name="ticketRoute">Desired ticket route</param>
@@ -71,6 +71,14 @@ namespace MultiAgentBookingSystem.Actors
                 broker.Tell(ticketProviderResponseMessage);
 
                 LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, ticketProviderResponseMessage.GetType(), broker.Path.ToStringWithoutAddress());
+            }
+            else if(this.offeredTickets.ContainsKey(ticketRoute) && this.offeredTickets[ticketRoute] == 0)
+            {
+                ++this.offeredTickets[ticketRoute];
+            }
+            else if (!this.offeredTickets.ContainsKey(ticketRoute))
+            {
+                this.offeredTickets.Add(ticketRoute, 1);
             }
         }
 

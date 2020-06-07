@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using Akka.Event;
+using MultiAgentBookingSystem.Actors.Common;
 using MultiAgentBookingSystem.DataResources;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages.Brokers;

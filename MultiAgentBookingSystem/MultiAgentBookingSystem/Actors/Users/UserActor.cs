@@ -1,7 +1,6 @@
 ﻿using Akka.Actor;
 using Akka.Event;
 using MultiAgentBookingSystem.DataResources;
-using MultiAgentBookingSystem.Exceptions;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Brokers;
@@ -53,7 +52,10 @@ namespace MultiAgentBookingSystem.Actors
 
                 this.brokers = new Dictionary<Guid, IActorRef>(message.brokers);
 
-                Become(BookingTicketState);
+                if (this.brokers.Count > 0)
+                {
+                    Become(BookingTicketState);
+                }
             });
         }
 

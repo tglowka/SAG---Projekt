@@ -106,6 +106,7 @@
     <Compile Include="ActorModel.cs" />
     <Compile Include="Actors\Brokers\BrokerActor.cs" />
     <Compile Include="Actors\Brokers\BrokerCoordinatorActor.cs" />
+    <Compile Include="Actors\Common\CustomActor.cs" />
     <Compile Include="Actors\Supervisor\SystemSupervisorActor.cs" />
     <Compile Include="Actors\TicketProviders\TicketProviderActor.cs" />
     <Compile Include="Actors\TicketProviders\TicketProviderCoordinatorActor.cs" />
@@ -114,7 +115,6 @@
     <Compile Include="ColorConsole.cs" />
     <Compile Include="DataResources\RandomGenerator.cs" />
     <Compile Include="DataResources\TicketsHelper.cs" />
-    <Compile Include="Exceptions\Users\UserActorStopException.cs" />
     <Compile Include="Logger\LoggingConfiguration.cs" />
     <Compile Include="Messages\Brokers\BookTicketByBrokerMessage.cs" />
     <Compile Include="Messages\Brokers\TicketProviderConfirmationMessage.cs" />
@@ -148,6 +148,7 @@
   <ItemGroup>
     <Folder Include="Exceptions\Brokers\" />
     <Folder Include="Exceptions\TicketProviders\" />
+    <Folder Include="Exceptions\Users\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

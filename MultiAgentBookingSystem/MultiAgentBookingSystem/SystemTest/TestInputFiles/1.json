@@ -14,15 +14,15 @@
   "NewActorCount": {
     "UserActor": {
       "MinCount": 10,
-      "MaxCount": 100
+      "MaxCount": 1000
     },
     "BrokerActor": {
       "MinCount": 1,
-      "MaxCount": 5
+      "MaxCount": 1
     },
     "TicketProviderActor": {
       "MinCount": 1,
-      "MaxCount": 2
+      "MaxCount": 1
     }
   }
 }

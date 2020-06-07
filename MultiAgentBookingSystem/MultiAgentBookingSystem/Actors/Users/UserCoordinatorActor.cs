@@ -1,7 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Event;
+using MultiAgentBookingSystem.Actors.Common;
 using MultiAgentBookingSystem.DataResources;
-using MultiAgentBookingSystem.Exceptions;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Abstracts;
@@ -13,10 +13,8 @@ using System.Threading;
 
 namespace MultiAgentBookingSystem.Actors
 {
-    public class UserCoordinatorActor : ReceiveActor
+    public class UserCoordinatorActor : CustomActor<UserActor>
     {
-        private Dictionary<Guid, IActorRef> childrenActors = new Dictionary<Guid, IActorRef>();
-
         public UserCoordinatorActor()
         {
             this.Become(this.InitialState);
@@ -53,48 +51,6 @@ namespace MultiAgentBookingSystem.Actors
 
                 this.RemoveChildActor(message.ActorId);
             });
-        }
-
-        private void CreateChildActor(int actorCount = 1)
-        {
-            for (int i = 0; i < actorCount; i++)
-            {
-                Guid newActorId = Guid.NewGuid();
-
-                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new UserActor(newActorId)), newActorId.ToString());
-                this.childrenActors.Add(newActorId, newChildActorRef);
-            }
-        }
-
-        private void CreateChildActor(int minCount, int maxCount)
-        {
-            int actorCount = RandomGenerator.Instance.random.Next(minCount, maxCount + 1);
-
-            for (int i = 0; i < actorCount; i++)
-            {
-                Guid newActorId = Guid.NewGuid();
-
-                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new UserActor(newActorId)), newActorId.ToString());
-                this.childrenActors.Add(newActorId, newChildActorRef);
-            }
-        }
-
-        private void RemoveChildActor(Guid actorId)
-        {
-            if (this.childrenActors.ContainsKey(actorId))
-            {
-                IActorRef childActorRef = this.childrenActors[actorId];
-
-                childActorRef.Tell(PoisonPill.Instance);
-
-                this.childrenActors.Remove(actorId);
-
-                ColorConsole.WriteLineColor($"UserCoordinatorActor remove child userActor for {actorId} (Total Users: {this.childrenActors.Count}", ConsoleColor.Cyan);
-            }
-            else
-            {
-                ColorConsole.WriteLineColor($"ERROR - not exists! UserCoordinatorActor can not remove child userActor for {actorId} (Total Users: {this.childrenActors.Count}", ConsoleColor.Cyan);
-            }
         }
 
         #endregion

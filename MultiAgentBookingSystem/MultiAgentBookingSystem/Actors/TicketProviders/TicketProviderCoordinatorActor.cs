@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using Akka.Event;
+using MultiAgentBookingSystem.Actors.Common;
 using MultiAgentBookingSystem.DataResources;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
@@ -13,10 +14,8 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors
 {
-    public class TicketProviderCoordinatorActor : ReceiveActor
+    public class TicketProviderCoordinatorActor : CustomActor<TicketProviderActor>
     {
-        private Dictionary<Guid, IActorRef> childrenActors = new Dictionary<Guid, IActorRef>();
-
         public TicketProviderCoordinatorActor()
         {
             this.Become(this.InitialState);
@@ -53,48 +52,6 @@ namespace MultiAgentBookingSystem.Actors
 
                 this.RemoveChildActor(message.ActorId);
             });
-        }
-
-        private void CreateChildActor(int actorCount = 1)
-        {
-            for (int i = 0; i < actorCount; i++)
-            {
-                Guid newActorId = Guid.NewGuid();
-
-                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new TicketProviderActor(newActorId)), newActorId.ToString());
-                childrenActors.Add(newActorId, newChildActorRef);
-            }
-        }
-
-        private void CreateChildActor(int minCount, int maxCount)
-        {
-            int actorCount = RandomGenerator.Instance.random.Next(minCount, maxCount + 1);
-
-            for (int i = 0; i < actorCount; i++)
-            {
-                Guid newActorId = Guid.NewGuid();
-
-                IActorRef newChildActorRef = Context.ActorOf(Props.Create(() => new TicketProviderActor(newActorId)), newActorId.ToString());
-                childrenActors.Add(newActorId, newChildActorRef);
-            }
-        }
-
-        private void RemoveChildActor(Guid actorId)
-        {
-            if (childrenActors.ContainsKey(actorId))
-            {
-                IActorRef childActorRef = childrenActors[actorId];
-
-                childActorRef.Tell(PoisonPill.Instance);
-
-                childrenActors.Remove(actorId);
-
-                ColorConsole.WriteLineColor($"TicketProviderCoordinatorActor remove child TicketProviderActor for {actorId} (Total TicketProviders: {childrenActors.Count}", ConsoleColor.Cyan);
-            }
-            else
-            {
-                ColorConsole.WriteLineColor($"ERROR - not exists! TicketProviderCoordinatorActor can not remove child TicketProviderActor for {actorId} (Total TicketProviders: {childrenActors.Count}", ConsoleColor.Cyan);
-            }
         }
 
         #endregion

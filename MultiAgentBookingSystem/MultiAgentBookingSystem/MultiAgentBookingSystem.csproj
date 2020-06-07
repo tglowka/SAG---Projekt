@@ -114,7 +114,7 @@
     <Compile Include="ColorConsole.cs" />
     <Compile Include="DataResources\RandomGenerator.cs" />
     <Compile Include="DataResources\TicketsHelper.cs" />
-    <Compile Include="Exceptions\UserActorStopException.cs" />
+    <Compile Include="Exceptions\Users\UserActorStopException.cs" />
     <Compile Include="Logger\LoggingConfiguration.cs" />
     <Compile Include="Messages\Brokers\BookTicketByBrokerMessage.cs" />
     <Compile Include="Messages\Brokers\TicketProviderConfirmationMessage.cs" />
@@ -134,7 +134,8 @@
     <Compile Include="SystemTest\Models\NewActorCount.cs" />
     <Compile Include="SystemTest\Models\NewActorMessageInterval.cs" />
     <Compile Include="SystemTest\Services\SystemTestsService.cs" />
-    <Compile Include="SystemTest\TestsSupervisor.cs" />
+    <Compile Include="SystemTest\TestsSupervisorActor.cs" />
+    <Compile Include="System\SystemConstants.cs" />
     <Compile Include="System\TicketBookingActorSystem.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +145,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Exceptions\Brokers\" />
+    <Folder Include="Exceptions\TicketProviders\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

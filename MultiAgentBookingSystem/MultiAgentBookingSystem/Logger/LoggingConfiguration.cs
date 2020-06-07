@@ -18,7 +18,7 @@ namespace MultiAgentBookingSystem.Logger
         private static readonly Lazy<LoggingConfiguration> instance = new Lazy<LoggingConfiguration>(() => new LoggingConfiguration());
         private enum CustomTypes
         {
-            Creation ,
+            Creation,
             Stop
         };
 

@@ -16,9 +16,9 @@ namespace MultiAgentBookingSystem.Actors
         private readonly string BrokerCoordiatorActorName = "BrokerCoordinator";
         private readonly string TicketProviderCoordinatorActorName = "TicketProviderCoordinator";
 
-        private IActorRef UserCoordinatorActor;
-        private IActorRef BrokerCoordinatorActor;
-        private IActorRef TicketProviderCoordinatorActor;
+        public IActorRef UserCoordinatorActor { get; private set; }
+        public IActorRef BrokerCoordinatorActor { get; private set; }
+        public IActorRef TicketProviderCoordinatorActor { get; private set; }
 
         public SystemSupervisorActor()
         {
@@ -26,79 +26,6 @@ namespace MultiAgentBookingSystem.Actors
             this.BrokerCoordinatorActor = Context.ActorOf(Props.Create(() => new BrokerCoordinatorActor()), this.BrokerCoordiatorActorName);
             this.TicketProviderCoordinatorActor = Context.ActorOf(Props.Create(() => new TicketProviderCoordinatorActor()), this.TicketProviderCoordinatorActorName);
         }
-
-        public SystemSupervisorActor(int userActorCount, int brokerActorCount, int ticketProviderActorCount)
-        {
-            this.UserCoordinatorActor = Context.ActorOf(Props.Create(() => new UserCoordinatorActor(userActorCount)), this.UserCoordiatorActorName);
-            this.BrokerCoordinatorActor = Context.ActorOf(Props.Create(() => new BrokerCoordinatorActor(brokerActorCount)), this.BrokerCoordiatorActorName);
-            this.TicketProviderCoordinatorActor = Context.ActorOf(Props.Create(() => new TicketProviderCoordinatorActor(ticketProviderActorCount)), this.TicketProviderCoordinatorActorName);
-        }
-
-        public SystemSupervisorActor(InputFile inputFile)
-        {
-            this.UserCoordinatorActor = Context.ActorOf(Props.Create(() => new UserCoordinatorActor(inputFile.InitialActorCount.UserActor)), this.UserCoordiatorActorName);
-            this.BrokerCoordinatorActor = Context.ActorOf(Props.Create(() => new BrokerCoordinatorActor(inputFile.InitialActorCount.BrokerActor)), this.BrokerCoordiatorActorName);
-            this.TicketProviderCoordinatorActor = Context.ActorOf(Props.Create(() => new TicketProviderCoordinatorActor(inputFile.InitialActorCount.TicketProviderActor)), this.TicketProviderCoordinatorActorName);
-
-            this.SetupNewActorCreateScheduler(inputFile);
-        }
-
-        #region private methods
-
-        private void SetupNewActorCreateScheduler(InputFile inputFile)
-        {
-            int minCount, maxCount;
-
-            int interval = inputFile.NewActorMessageInterval.UserActor;
-            if (interval > 0)
-            {
-                minCount = inputFile.NewActorCount.UserActor.MinCount;
-                maxCount = inputFile.NewActorCount.UserActor.MaxCount;
-
-                AddRandomCountActorMessage addUserActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
-
-                TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
-                    TimeSpan.FromSeconds(0),
-                    TimeSpan.FromSeconds(interval),
-                    this.UserCoordinatorActor,
-                    addUserActorMessage,
-                    Self);
-            }
-
-            interval = inputFile.NewActorMessageInterval.BrokerActor;
-            if (interval > 0)
-            {
-                minCount = inputFile.NewActorCount.BrokerActor.MinCount;
-                maxCount = inputFile.NewActorCount.BrokerActor.MaxCount;
-
-                AddRandomCountActorMessage addBrokerActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
-
-                TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
-                    TimeSpan.FromSeconds(0),
-                    TimeSpan.FromSeconds(interval),
-                    this.BrokerCoordinatorActor,
-                    addBrokerActorMessage,
-                    Self);
-            }
-
-            interval = inputFile.NewActorMessageInterval.TicketProviderActor;
-            if (interval > 0)
-            {
-                minCount = inputFile.NewActorCount.TicketProviderActor.MinCount;
-                maxCount = inputFile.NewActorCount.TicketProviderActor.MaxCount;
-
-                AddRandomCountActorMessage addTicketProviderActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
-
-                TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
-                    TimeSpan.FromSeconds(0),
-                    TimeSpan.FromSeconds(interval),
-                    this.TicketProviderCoordinatorActor,
-                    addTicketProviderActorMessage,
-                    Self);
-            }
-        }
-
-        #endregion
 
         #region Lifecycle hooks
 

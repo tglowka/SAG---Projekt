@@ -29,8 +29,6 @@ namespace MultiAgentBookingSystem.Actors
             this.id = id;
             this.ticketRoute = TicketsHelper.GetRandomRoute();
 
-            //Console.WriteLine("ROUTE: {0}", ticketRoute);
-
             Become(LookingForBrokersState);
         }
 
@@ -79,8 +77,6 @@ namespace MultiAgentBookingSystem.Actors
             {
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                //Console.WriteLine($"User: {this.id} has booked ticket {this.ticketRoute}.");
-
                 Context.Stop(Self);
             });
         }
@@ -99,7 +95,7 @@ namespace MultiAgentBookingSystem.Actors
         }
 
         /// <summary>
-        ///     Send BookTicketByBrokerMessage message to random known broker. If there is no known broker, send message to BrokerCoordinator to get them.
+        ///     Send BookTicketByBrokerMessage message to randomly known broker. If there is no known broker, send message to BrokerCoordinator to get them.
         /// </summary>
         private void BookTicketByBroker()
         {
@@ -113,6 +109,8 @@ namespace MultiAgentBookingSystem.Actors
 
             LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, bookTicketByBrokerMessage.GetType(), randomBrokerActor.Path.ToStringWithoutAddress());
         }
+
+
 
         #endregion
 

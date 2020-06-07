@@ -107,22 +107,21 @@ namespace MultiAgentBookingSystem.Actors
                 null,
                 localOnlyDecider: ex =>
                 {
-                    switch (ex)
-                    {
-                        case ArithmeticException ae:
-                            return Directive.Resume;
-                        case NullReferenceException nre:
-                            return Directive.Restart;
-                        case ArgumentException are:
-                            Console.WriteLine("EEEEEEEERRRRRRRRRRROOOOOOOOORRRRRRRRRRRRRRRRRRR");
-                            UserActorStopException userActorStopException = ex as UserActorStopException;
-                            this.childrenActors.Remove(userActorStopException.Id);
-                            return Directive.Stop;
-                        default:
-                            return Directive.Escalate;
-                    }
-
-                    return Akka.Actor.SupervisorStrategy.DefaultStrategy.Decider.Decide(ex);
+                    //                  switch (ex)
+                    //                {
+                    //case ArithmeticException ae:
+                    //    return Directive.Resume;
+                    //case NullReferenceException nre:
+                    //    return Directive.Restart;
+                    //case ArgumentException are:
+                    //    Console.WriteLine("EEEEEEEERRRRRRRRRRROOOOOOOOORRRRRRRRRRRRRRRRRRR");
+                    //    UserActorStopException userActorStopException = ex as UserActorStopException;
+                    //    this.childrenActors.Remove(userActorStopException.Id);
+                    //    return Directive.Stop;
+                    //default:
+                    //    return Directive.Escalate;
+                    return Directive.Resume;
+                    //                    }
                 });
         }
 

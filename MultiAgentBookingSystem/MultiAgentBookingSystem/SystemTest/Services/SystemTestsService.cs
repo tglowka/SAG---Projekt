@@ -1,4 +1,6 @@
-﻿using MultiAgentBookingSystem.SystemTest.Models;
+﻿using MultiAgentBookingSystem.Messages.Common;
+using MultiAgentBookingSystem.System;
+using MultiAgentBookingSystem.SystemTest.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,19 +14,19 @@ namespace MultiAgentBookingSystem.SystemTest.Services
 {
     public class SystemTestsService
     {
-        private readonly string InputFilesDirectory = @"\SystemTest\TestInputFiles\";
-
         public SystemTestsService()
         {
 
         }
 
-        public InputFile GetInputFIle(string inputFileName)
+        #region public methods
+
+        public InputFile GetInputFIle(string inputFilesDirectorystring, string inputFileName)
         {
             try
             {
                 string currentExecutableDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                string inputFilePath = currentExecutableDirectory + this.InputFilesDirectory + inputFileName;
+                string inputFilePath = currentExecutableDirectory + inputFilesDirectorystring + inputFileName;
                 string inputFileContent = File.ReadAllText(inputFilePath);
 
                 InputFile inputFile = JsonConvert.DeserializeObject<InputFile>(inputFileContent);
@@ -37,6 +39,7 @@ namespace MultiAgentBookingSystem.SystemTest.Services
             }
         }
 
+        #endregion
     }
 }
 

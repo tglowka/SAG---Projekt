@@ -14,6 +14,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using MultiAgentBookingSystem.SystemTest.Models;
 using MultiAgentBookingSystem.SystemTest.Services;
+using MultiAgentBookingSystem.SystemTest;
 
 namespace MultiAgentBookingSystem
 {
@@ -23,14 +24,13 @@ namespace MultiAgentBookingSystem
         static void Main(string[] args)
         {
 
-            SystemTestsService systemTestsService = new SystemTestsService();
-            InputFile inputFile = systemTestsService.GetInputFIle("1.json");
-
             // Setup logging for the actor system
             LoggingConfiguration.Instance.SetupLogger();
 
             // Inititialize supervisor actor
-            TicketBookingActorSystem.Instance.actorSystem.ActorOf(Props.Create<SystemSupervisorActor>(inputFile), "SystemSupervisor");
+            TicketBookingActorSystem.Instance.actorSystem.ActorOf(Props.Create<SystemSupervisorActor>(), "SystemSupervisor");
+
+            TicketBookingActorSystem.Instance.actorSystem.ActorOf(Props.Create<TestsSupervisorActor>(@"\SystemTest\TestInputFiles\", "1.json"), "TestsSupervisor");
 
             Console.ReadKey();
 

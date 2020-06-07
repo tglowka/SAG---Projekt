@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using MultiAgentBookingSystem.Actors;
+using MultiAgentBookingSystem.Messages.Abstracts;
 using MultiAgentBookingSystem.Messages.Common;
 using MultiAgentBookingSystem.System;
 using MultiAgentBookingSystem.SystemTest.Models;
@@ -41,9 +42,26 @@ namespace MultiAgentBookingSystem.SystemTest
         public void StartSimulation()
         {
             this.SetupNewActorCreateScheduler();
+            this.SetupInitialActorCount();
         }
 
         #region private methods
+
+        private void SetupInitialActorCount()
+        {
+            int initialUserActorCount = this.InputFile.InitialActorCount.UserActor;
+            int initialBrokerActorCount = this.InputFile.InitialActorCount.BrokerActor;
+            int initialTicketProviderACtorCount = this.InputFile.InitialActorCount.TicketProviderActor;
+
+            AddActorMessage addUserActorMessage = new AddActorMessage(initialUserActorCount);
+            TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this.userCoordinatorActorPath).Tell(addUserActorMessage);
+
+            AddActorMessage addBrokerActorMessage = new AddActorMessage(initialBrokerActorCount);
+            TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this.brokerCoordinatorActorPath).Tell(addBrokerActorMessage);
+
+            AddActorMessage addTicketProviderActorMessage = new AddActorMessage(initialTicketProviderACtorCount);
+            TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this.ticketProviderCoordinatorActorPath).Tell(addTicketProviderActorMessage);
+        }
 
         private void SetupNewActorCreateScheduler()
         {

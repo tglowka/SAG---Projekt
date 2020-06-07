@@ -53,8 +53,7 @@ namespace MultiAgentBookingSystem.Actors
             {
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                this.BookTicketForUser(message.UserActorId, message.TicketRoute);
-                this.SendConfirmationMessageToTheBroker(Sender);
+                this.BookTicketForUser(Sender, message.UserActorId, message.TicketRoute);
             });
         }
 
@@ -73,7 +72,7 @@ namespace MultiAgentBookingSystem.Actors
 
                 LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, ticketProviderResponseMessage.GetType(), broker.Path.ToStringWithoutAddress());
             }
-            else if(this.offeredTickets.ContainsKey(ticketRoute) && this.offeredTickets[ticketRoute] == 0)
+            else if (this.offeredTickets.ContainsKey(ticketRoute) && this.offeredTickets[ticketRoute] == 0)
             {
                 ++this.offeredTickets[ticketRoute];
             }
@@ -88,7 +87,7 @@ namespace MultiAgentBookingSystem.Actors
         /// </summary>
         /// <param name="userActorId">User actor id</param>
         /// <param name="ticketRoute">Desired ticket route</param>
-        private void BookTicketForUser(Guid userActorId, string ticketRoute)
+        private void BookTicketForUser(IActorRef broker, Guid userActorId, string ticketRoute)
         {
             if (this.offeredTickets.ContainsKey(ticketRoute) && this.offeredTickets[ticketRoute] > 0)
             {
@@ -96,20 +95,21 @@ namespace MultiAgentBookingSystem.Actors
                 --this.offeredTickets[ticketRoute];
 
                 LoggingConfiguration.Instance.LogTicketProviderBookingMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, ticketRoute, userActorId);
+
+                TicketProviderConfirmationMessage ticketProviderConfirmationMessage = new TicketProviderConfirmationMessage();
+
+                broker.Tell(ticketProviderConfirmationMessage);
+
+                LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, ticketProviderConfirmationMessage.GetType(), broker.Path.ToStringWithoutAddress());
             }
-        }
-
-        /// <summary>
-        ///     Send booking confirmation to the broker.
-        /// </summary>
-        /// <param name="broker">Broker</param>
-        private void SendConfirmationMessageToTheBroker(IActorRef broker)
-        {
-            TicketProviderConfirmationMessage ticketProviderConfirmationMessage = new TicketProviderConfirmationMessage();
-
-            broker.Tell(ticketProviderConfirmationMessage);
-
-            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, ticketProviderConfirmationMessage.GetType(), broker.Path.ToStringWithoutAddress());
+            else if (this.offeredTickets.ContainsKey(ticketRoute) && this.offeredTickets[ticketRoute] == 0)
+            {
+                ++this.offeredTickets[ticketRoute];
+            }
+            else if (!this.offeredTickets.ContainsKey(ticketRoute))
+            {
+                this.offeredTickets.Add(ticketRoute, 1);
+            }
         }
 
         #endregion

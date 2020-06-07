@@ -61,6 +61,7 @@ namespace MultiAgentBookingSystem.Actors
             {
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
                 // TODO 
+                Stash.UnstashAll();
                 Become(WaitingForUserActorState);
             });
 
@@ -87,6 +88,9 @@ namespace MultiAgentBookingSystem.Actors
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
                 this.NotifyUserAboutConfirmation(message);
+                
+                Stash.UnstashAll();
+                Become(WaitingForUserActorState);
             });
         }
 

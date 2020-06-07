@@ -38,7 +38,7 @@ namespace MultiAgentBookingSystem.Actors
 
         private void LookingForBrokersState()
         {
-            Context.SetReceiveTimeout(TimeSpan.FromSeconds(3));
+            Context.SetReceiveTimeout(TimeSpan.FromSeconds(10));
 
             this.GetAllBrokers();
 
@@ -61,7 +61,7 @@ namespace MultiAgentBookingSystem.Actors
 
         private void BookingTicketState()
         {
-            Context.SetReceiveTimeout(TimeSpan.FromSeconds(5));
+            Context.SetReceiveTimeout(TimeSpan.FromSeconds(20));
 
             this.BookTicketByBroker();
 

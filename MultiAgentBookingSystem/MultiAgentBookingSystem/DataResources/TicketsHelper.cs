@@ -11,7 +11,7 @@ namespace MultiAgentBookingSystem.DataResources
         /// <summary>
         ///     Max ticket count on particular route.
         /// </summary>
-        private static int singleRouteMaxCount = 10;
+        private static int singleRouteMaxCount = 500;
 
         /// <summary>
         ///     List of the possible routes that user actor is able to book.

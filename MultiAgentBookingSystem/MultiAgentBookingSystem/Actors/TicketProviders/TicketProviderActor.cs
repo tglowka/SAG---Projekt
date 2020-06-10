@@ -44,16 +44,30 @@ namespace MultiAgentBookingSystem.Actors
 
             Receive<NotifyTicketProvidersMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                try
+                {
+                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                this.NotifyBrokerAboutTicketAvailability(message.UserActorId, message.TicketRoute, Sender);
+                    this.NotifyBrokerAboutTicketAvailability(message.UserActorId, message.TicketRoute, Sender);
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
             });
 
             Receive<BookTicketMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                try
+                {
+                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                this.BookTicketForUser(Sender, message.UserActorId, message.TicketRoute);
+                    this.BookTicketForUser(Sender, message.UserActorId, message.TicketRoute);
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
             });
         }
 
@@ -93,9 +107,6 @@ namespace MultiAgentBookingSystem.Actors
             {
                 this.bookedTickets.Add(userActorId, ticketRoute);
                 --this.offeredTickets[ticketRoute];
-
-                LoggingConfiguration.Instance.LogTicketProviderBookingMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, ticketRoute, userActorId);
-
                 TicketProviderConfirmationMessage ticketProviderConfirmationMessage = new TicketProviderConfirmationMessage();
 
                 broker.Tell(ticketProviderConfirmationMessage);

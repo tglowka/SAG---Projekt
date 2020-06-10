@@ -44,12 +44,19 @@ namespace MultiAgentBookingSystem.Actors
 
             Receive<BookTicketByBrokerMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                try
+                {
+                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                this.SetCurrentContext(message.UserActorId, message.TicketRoute, Sender, Guid.Empty);
-                this.NotifyTicketProviders(message.UserActorId, message.TicketRoute);
+                    this.SetCurrentContext(message.UserActorId, message.TicketRoute, Sender, Guid.Empty);
+                    this.NotifyTicketProviders(message.UserActorId, message.TicketRoute);
 
-                Become(BookingState);
+                    Become(BookingState);
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
             });
         }
 
@@ -59,38 +66,66 @@ namespace MultiAgentBookingSystem.Actors
 
             Receive<ReceiveTimeout>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-                // TODO 
-                Stash.UnstashAll();
-                Become(WaitingForUserActorState);
+                try
+                {
+                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                    
+                    Stash.UnstashAll();
+                    Become(WaitingForUserActorState);
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
             });
 
             Receive<BookTicketByBrokerMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                try
+                {
+                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                Stash.Stash();
+                    Stash.Stash();
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
             });
 
             Receive<TicketProviderResponseMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                try
+                {
+                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                this.SetCurrentContext(this.currentSupportedUserActorId, this.currentSupportedUserActorTicketRoute, this.currentSupportedUserActorRef, message.TicketProviderId);
+                    this.SetCurrentContext(this.currentSupportedUserActorId, this.currentSupportedUserActorTicketRoute, this.currentSupportedUserActorRef, message.TicketProviderId);
 
-                if (this.CheckWithCurrentContext(message.UserActorId, message.TicketRoute, message.TicketProviderId))
-                    this.BookTicket(Sender, message.UserActorId, message.TicketRoute);
+                    if (this.CheckWithCurrentContext(message.UserActorId, message.TicketRoute, message.TicketProviderId))
+                        this.BookTicket(Sender, message.UserActorId, message.TicketRoute);
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
 
             });
 
             Receive<TicketProviderConfirmationMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                try
+                {
+                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                this.NotifyUserAboutConfirmation(message);
-                
-                Stash.UnstashAll();
-                Become(WaitingForUserActorState);
+                    this.NotifyUserAboutConfirmation(message);
+
+                    Stash.UnstashAll();
+                    Become(WaitingForUserActorState);
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
             });
         }
 

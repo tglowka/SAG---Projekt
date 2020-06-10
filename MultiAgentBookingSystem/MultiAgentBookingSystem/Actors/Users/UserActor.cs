@@ -41,45 +41,80 @@ namespace MultiAgentBookingSystem.Actors
 
             Receive<ReceiveTimeout>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                try
+                {
+                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                this.GetAllBrokers();
+                    this.GetAllBrokers();
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
             });
 
             Receive<ReceiveAllBrokers>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
-                this.brokers = new Dictionary<Guid, IActorRef>(message.brokers);
-
-                if (this.brokers.Count > 0)
+                try
                 {
-                    Become(BookingTicketState);
+                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+
+                    this.brokers = new Dictionary<Guid, IActorRef>(message.brokers);
+
+                    if (this.brokers.Count > 0)
+                    {
+                        Become(BookingTicketState);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
                 }
             });
         }
 
         private void BookingTicketState()
         {
-            Context.SetReceiveTimeout(TimeSpan.FromSeconds(20));
+            try
+            {
+                Context.SetReceiveTimeout(TimeSpan.FromSeconds(5));
 
-            this.BookTicketByBroker();
-
+                this.BookTicketByBroker();
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
             Receive<ReceiveTimeout>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                try
+                {
+                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                if (this.brokers?.Count > 0)
-                    this.BookTicketByBroker();
-                else
-                    Become(LookingForBrokersState);
+                    if (this.brokers?.Count > 0)
+                        this.BookTicketByBroker();
+                    else
+                        Become(LookingForBrokersState);
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
             });
 
             Receive<TicketProviderConfirmationMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                try
+                {
+                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                Context.Stop(Self);
+                    LoggingConfiguration.Instance.LogTicketProviderBookingMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, this.ticketRoute, this.id);
+                    Context.Stop(Self);
+                }
+                catch (Exception exception)
+                {
+                    throw exception;
+                }
             });
         }
 

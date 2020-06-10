@@ -51,7 +51,7 @@ namespace MultiAgentBookingSystem.SystemTest
         {
             int initialUserActorCount = this.InputFile.InitialActorCount.UserActor;
             int initialBrokerActorCount = this.InputFile.InitialActorCount.BrokerActor;
-            int initialTicketProviderACtorCount = this.InputFile.InitialActorCount.TicketProviderActor;
+            int initialTicketProviderActorCount = this.InputFile.InitialActorCount.TicketProviderActor;
 
             AddActorMessage addUserActorMessage = new AddActorMessage(initialUserActorCount);
             TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this.userCoordinatorActorPath).Tell(addUserActorMessage);
@@ -59,7 +59,7 @@ namespace MultiAgentBookingSystem.SystemTest
             AddActorMessage addBrokerActorMessage = new AddActorMessage(initialBrokerActorCount);
             TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this.brokerCoordinatorActorPath).Tell(addBrokerActorMessage);
 
-            AddActorMessage addTicketProviderActorMessage = new AddActorMessage(initialTicketProviderACtorCount);
+            AddActorMessage addTicketProviderActorMessage = new AddActorMessage(initialTicketProviderActorCount);
             TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this.ticketProviderCoordinatorActorPath).Tell(addTicketProviderActorMessage);
         }
 

@@ -71,14 +71,27 @@ namespace MultiAgentBookingSystem.Logger
         }
 
         /// <summary>
-        ///     Create actor count info log.
+        ///     Create active actor count info log.
         /// </summary>
         /// <param name="loggingAdapter">Logging adapter</param>
         /// <param name="actorType">Actor type</param>
         /// <param name="actorPath">Actor path</param>
-        public void LogActorCount(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, int childActorCount)
+        /// <param name="childActorCount">Active child actor count</param>
+        public void LogActiveActorCount(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, int childActorCount)
         {
             loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath},  CHILD ACTOR COUNT: {ChildActorCount} ", actorType.Name, actorPath.ToStringWithoutAddress(), childActorCount);
+        }
+
+        /// <summary>
+        ///     Create all actors count info log.
+        /// </summary>
+        /// <param name="loggingAdapter">Logging adapter</param>
+        /// <param name="actorType">Actor type</param>
+        /// <param name="actorPath">Actor path</param>
+        /// <param name="allChildActorCount">All child actor count</param>
+        public void LogAllActorCount(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, int allChildActorCount)
+        {
+            loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath},  ALL CHILD ACTOR COUNT: {AllChildActorCount}", actorType.Name, actorPath.ToStringWithoutAddress(), allChildActorCount);
         }
 
         /// <summary>
@@ -181,7 +194,7 @@ namespace MultiAgentBookingSystem.Logger
         /// <param name="from">Message sender</param>
         public void LogReceiveMessageInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, Type messageType, string from)
         {
-            loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Received: {MessageType} From: {From}", actorType.Name, actorPath.ToStringWithoutAddress(), messageType.Name, from);
+           // loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Received: {MessageType} From: {From}", actorType.Name, actorPath.ToStringWithoutAddress(), messageType.Name, from);
         }
 
         /// <summary>
@@ -194,7 +207,7 @@ namespace MultiAgentBookingSystem.Logger
         /// <param name="to">Message recipient</param>
         public void LogSendMessageInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, Type messageType, string to)
         {
-            loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Send: {MessageType}, To: {To}", actorType.Name, actorPath.ToStringWithoutAddress(), messageType.Name, to);
+         //   loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Send: {MessageType}, To: {To}", actorType.Name, actorPath.ToStringWithoutAddress(), messageType.Name, to);
         }
 
         /// <summary>

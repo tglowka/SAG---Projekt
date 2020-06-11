@@ -121,6 +121,7 @@
     <Compile Include="Messages\Brokers\TicketProviderResponseMessage.cs" />
     <Compile Include="Messages\Common\AddActorMessage.cs" />
     <Compile Include="Messages\Common\AddRandomCountActorMessage.cs" />
+    <Compile Include="Messages\Common\LogChildernCountMessage.cs" />
     <Compile Include="Messages\Common\RemoveActorMessage.cs" />
     <Compile Include="Messages\Brokers\GetAllBrokersMessage.cs" />
     <Compile Include="Messages\TicketProviders\BookTicketMessage.cs" />

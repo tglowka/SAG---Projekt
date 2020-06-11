@@ -1,5 +1,7 @@
 ﻿using Akka.Actor;
+using Akka.Event;
 using MultiAgentBookingSystem.DataResources;
+using MultiAgentBookingSystem.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +48,12 @@ namespace MultiAgentBookingSystem.Actors.Common
 
                 this.childrenActors.Remove(actorId);
             }
+        }
+
+        protected void LogChildrenCount(Type actorType, ActorPath actorPath)
+        {
+            LoggingConfiguration.Instance.LogActiveActorCount(Context.GetLogger(), actorType, actorPath, Context.GetChildren().Count());
+            LoggingConfiguration.Instance.LogAllActorCount(Context.GetLogger(), actorType, actorPath, this.childrenActors.Count);
         }
     }
 }

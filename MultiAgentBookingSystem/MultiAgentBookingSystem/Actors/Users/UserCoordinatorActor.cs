@@ -9,6 +9,7 @@ using MultiAgentBookingSystem.Messages.Common;
 using MultiAgentBookingSystem.System;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace MultiAgentBookingSystem.Actors
@@ -50,6 +51,11 @@ namespace MultiAgentBookingSystem.Actors
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
                 this.RemoveChildActor(message.ActorId);
+            });
+
+            Receive<LogChildernCountMessage>(message =>
+            {
+                this.LogChildrenCount(this.GetType(), Self.Path);
             });
         }
 

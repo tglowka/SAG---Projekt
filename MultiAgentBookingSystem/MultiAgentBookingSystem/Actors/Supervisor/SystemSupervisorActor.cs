@@ -12,19 +12,31 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class SystemSupervisorActor : ReceiveActor
     {
-        private readonly string UserCoordiatorActorName = "UserCoordinator";
-        private readonly string BrokerCoordiatorActorName = "BrokerCoordinator";
-        private readonly string TicketProviderCoordinatorActorName = "TicketProviderCoordinator";
-
         public IActorRef UserCoordinatorActor { get; private set; }
         public IActorRef BrokerCoordinatorActor { get; private set; }
         public IActorRef TicketProviderCoordinatorActor { get; private set; }
 
         public SystemSupervisorActor()
         {
-            this.UserCoordinatorActor = Context.ActorOf(Props.Create(() => new UserCoordinatorActor()), this.UserCoordiatorActorName);
-            this.BrokerCoordinatorActor = Context.ActorOf(Props.Create(() => new BrokerCoordinatorActor()), this.BrokerCoordiatorActorName);
-            this.TicketProviderCoordinatorActor = Context.ActorOf(Props.Create(() => new TicketProviderCoordinatorActor()), this.TicketProviderCoordinatorActorName);
+            this.UserCoordinatorActor = Context.ActorOf(Props.Create(() => new UserCoordinatorActor()), SystemConstants.UserCoordinatorActorName);
+            this.BrokerCoordinatorActor = Context.ActorOf(Props.Create(() => new BrokerCoordinatorActor()), SystemConstants.BrokerCoordinatorActorName);
+            this.TicketProviderCoordinatorActor = Context.ActorOf(Props.Create(() => new TicketProviderCoordinatorActor()), SystemConstants.TicketProviderCoordinatorActorName);
+
+            this.SetupScheduler();
+        }
+
+        private void SetupScheduler()
+        {
+            int interval = 5;
+
+            LogChildernCountMessage logChildernCountMessage = new LogChildernCountMessage();
+
+            TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
+                    TimeSpan.FromSeconds(0),
+                    TimeSpan.FromSeconds(interval),
+                    this.UserCoordinatorActor,
+                    logChildernCountMessage,
+                    Self);
         }
 
         #region Lifecycle hooks

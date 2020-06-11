@@ -15,9 +15,9 @@ namespace MultiAgentBookingSystem.SystemTest
 {
     public class TestsSupervisorActor : ReceiveActor
     {
-        private readonly string userCoordinatorActorPath = $"/user/{SystemConstants.SystemSupervisorActorName}/{SystemConstants.UserCoordinatorActorName}";
-        private readonly string brokerCoordinatorActorPath = $"/user/{SystemConstants.SystemSupervisorActorName}/{SystemConstants.BrokerCoordinatorActorName}";
-        private readonly string ticketProviderCoordinatorActorPath = $"/user/{SystemConstants.SystemSupervisorActorName}/{SystemConstants.TicketProviderCoordinatorActorName}";
+        private readonly string userCoordinatorActorPath = ActorPaths.UserCoordinatorActor.Path;
+        private readonly string brokerCoordinatorActorPath = ActorPaths.BrokerCoordinatorActor.Path;
+        private readonly string ticketProviderCoordinatorActorPath = ActorPaths.TicketProviderCoordinatorActor.Path;
 
         private readonly string InputFilesDirectory;
 

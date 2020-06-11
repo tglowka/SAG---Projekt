@@ -12,5 +12,9 @@ namespace MultiAgentBookingSystem.System
         public static readonly ActorMetaData UserCoordinatorActor = new ActorMetaData(SystemConstants.UserCoordinatorActorName, ActorPaths.SystemSupervisorActor);
         public static readonly ActorMetaData BrokerCoordinatorActor = new ActorMetaData(SystemConstants.BrokerCoordinatorActorName, ActorPaths.SystemSupervisorActor);
         public static readonly ActorMetaData TicketProviderCoordinatorActor = new ActorMetaData(SystemConstants.TicketProviderCoordinatorActorName, ActorPaths.SystemSupervisorActor);
+
+        public static readonly ActorMetaData UserActors = new ActorMetaData(SystemConstants.Wildcard, ActorPaths.UserCoordinatorActor);
+        public static readonly ActorMetaData BrokerActors = new ActorMetaData(SystemConstants.Wildcard, ActorPaths.BrokerCoordinatorActor);
+        public static readonly ActorMetaData TickerProviderActors = new ActorMetaData(SystemConstants.Wildcard, ActorPaths.TicketProviderCoordinatorActor);
     }
 }

@@ -13,5 +13,6 @@ namespace MultiAgentBookingSystem.System
         public const string UserCoordinatorActorName = "UserCoordinator";
         public const string BrokerCoordinatorActorName = "BrokerCoordinator";
         public const string TicketProviderCoordinatorActorName = "TicketProviderCoordinator";
+        public const string Wildcard = "*";
     }
 }

@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.SystemTest.Models
 {
-    public class InitialActorCount
+    public class RandomExceptionMessageInterval
     {
+        public int UserCoordinatorActor { get; set; }
+        public int BrokerCoordinatorActor { get; set; }
+        public int TicketProviderCoordinatorActor { get; set; }
         public int UserActor { get; set; }
         public int BrokerActor { get; set; }
         public int TicketProviderActor { get; set; }

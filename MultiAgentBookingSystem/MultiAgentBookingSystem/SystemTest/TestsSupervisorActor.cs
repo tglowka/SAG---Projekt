@@ -15,13 +15,13 @@ namespace MultiAgentBookingSystem.SystemTest
 {
     public class TestsSupervisorActor : ReceiveActor
     {
-        private readonly string userCoordinatorActorPath = ActorPaths.UserCoordinatorActor.Path;
-        private readonly string brokerCoordinatorActorPath = ActorPaths.BrokerCoordinatorActor.Path;
-        private readonly string ticketProviderCoordinatorActorPath = ActorPaths.TicketProviderCoordinatorActor.Path;
+        private readonly string _userCoordinatorActorPath = ActorPaths.UserCoordinatorActor.Path;
+        private readonly string _brokerCoordinatorActorPath = ActorPaths.BrokerCoordinatorActor.Path;
+        private readonly string _ticketProviderCoordinatorActorPath = ActorPaths.TicketProviderCoordinatorActor.Path;
+        private readonly string _userActors = ActorPaths.UserActors.Path;
+        private readonly string _brokerActors = ActorPaths.BrokerActors.Path;
+        private readonly string _ticketProviderActors = ActorPaths.TickerProviderActors.Path;
 
-        private readonly string InputFilesDirectory;
-
-        private readonly string InputFileName;
 
         private readonly InputFile InputFile;
 
@@ -31,18 +31,16 @@ namespace MultiAgentBookingSystem.SystemTest
         {
             this.SystemTestsService = new SystemTestsService();
 
-            this.InputFilesDirectory = inputFilesDirectory;
-            this.InputFileName = inputFileName;
-
-            this.InputFile = this.SystemTestsService.GetInputFIle(this.InputFilesDirectory, this.InputFileName);
+            this.InputFile = this.SystemTestsService.GetInputFIle(inputFilesDirectory, inputFileName);
 
             this.StartSimulation();
         }
 
-        public void StartSimulation()
+        private void StartSimulation()
         {
-            this.SetupNewActorCreateScheduler();
+            this.SetupNewActorMessageSchedulers();
             this.SetupInitialActorCount();
+            this.SetupRandomExceptionSchedulers();
         }
 
         #region private methods
@@ -54,64 +52,104 @@ namespace MultiAgentBookingSystem.SystemTest
             int initialTicketProviderActorCount = this.InputFile.InitialActorCount.TicketProviderActor;
 
             AddActorMessage addUserActorMessage = new AddActorMessage(initialUserActorCount);
-            TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this.userCoordinatorActorPath).Tell(addUserActorMessage);
+            TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this._userCoordinatorActorPath).Tell(addUserActorMessage);
 
             AddActorMessage addBrokerActorMessage = new AddActorMessage(initialBrokerActorCount);
-            TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this.brokerCoordinatorActorPath).Tell(addBrokerActorMessage);
+            TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this._brokerCoordinatorActorPath).Tell(addBrokerActorMessage);
 
             AddActorMessage addTicketProviderActorMessage = new AddActorMessage(initialTicketProviderActorCount);
-            TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this.ticketProviderCoordinatorActorPath).Tell(addTicketProviderActorMessage);
+            TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this._ticketProviderCoordinatorActorPath).Tell(addTicketProviderActorMessage);
         }
 
-        private void SetupNewActorCreateScheduler()
+        private void SetupNewActorMessageSchedulers()
         {
-            int minCount, maxCount;
+            this.SetupNewActorMessageScheduler(
+                                                this.InputFile.NewActorCount.UserActor.MinCount,
+                                                this.InputFile.NewActorCount.UserActor.MaxCount,
+                                                this.InputFile.NewActorMessageInterval.UserActor,
+                                                this._userCoordinatorActorPath
+                                                );
 
-            int interval = this.InputFile.NewActorMessageInterval.UserActor;
+            this.SetupNewActorMessageScheduler(
+                                                this.InputFile.NewActorCount.BrokerActor.MinCount,
+                                                this.InputFile.NewActorCount.BrokerActor.MaxCount,
+                                                this.InputFile.NewActorMessageInterval.BrokerActor,
+                                                this._brokerCoordinatorActorPath
+                                                );
+
+            this.SetupNewActorMessageScheduler(
+                                                this.InputFile.NewActorCount.TicketProviderActor.MinCount,
+                                                this.InputFile.NewActorCount.TicketProviderActor.MaxCount,
+                                                this.InputFile.NewActorMessageInterval.TicketProviderActor,
+                                                this._ticketProviderCoordinatorActorPath
+                                                );
+        }
+
+        private void SetupNewActorMessageScheduler(int minCount, int maxCount, int interval, string coordinatorActorPath)
+        {
             if (interval > 0)
             {
-                minCount = this.InputFile.NewActorCount.UserActor.MinCount;
-                maxCount = this.InputFile.NewActorCount.UserActor.MaxCount;
-
-                AddRandomCountActorMessage addUserActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
+                AddRandomCountActorMessage addRandomCountActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
 
                 TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
                     TimeSpan.FromSeconds(0),
                     TimeSpan.FromSeconds(interval),
-                    TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this.userCoordinatorActorPath),
-                    addUserActorMessage,
+                    TicketBookingActorSystem.Instance.actorSystem.ActorSelection(coordinatorActorPath),
+                    addRandomCountActorMessage,
                     Self);
             }
+        }
 
-            interval = this.InputFile.NewActorMessageInterval.BrokerActor;
+        private void SetupRandomExceptionSchedulers()
+        {
+            this.SetupRandomExceptionScheduler(
+                                                this.InputFile.RandomExceptionMessageProbability.UserCoordinatorActor,
+                                                this.InputFile.RandomExceptionMessageInterval.UserCoordinatorActor,
+                                                this._userCoordinatorActorPath
+                                                );
+
+            this.SetupRandomExceptionScheduler(
+                                               this.InputFile.RandomExceptionMessageProbability.BrokerCoordinatorActor,
+                                               this.InputFile.RandomExceptionMessageInterval.BrokerCoordinatorActor,
+                                               this._brokerCoordinatorActorPath
+                                               );
+
+            this.SetupRandomExceptionScheduler(
+                                               this.InputFile.RandomExceptionMessageProbability.TicketProviderCoordinatorActor,
+                                               this.InputFile.RandomExceptionMessageInterval.TicketProviderCoordinatorActor,
+                                               this._ticketProviderCoordinatorActorPath
+                                               );
+
+            this.SetupRandomExceptionScheduler(
+                                               this.InputFile.RandomExceptionMessageProbability.UserActor,
+                                               this.InputFile.RandomExceptionMessageInterval.UserActor,
+                                               this._userActors
+                                               );
+
+            this.SetupRandomExceptionScheduler(
+                                               this.InputFile.RandomExceptionMessageProbability.BrokerActor,
+                                               this.InputFile.RandomExceptionMessageInterval.BrokerActor,
+                                               this._brokerActors
+                                               );
+
+            this.SetupRandomExceptionScheduler(
+                                               this.InputFile.RandomExceptionMessageProbability.TicketProviderActor,
+                                               this.InputFile.RandomExceptionMessageInterval.TicketProviderActor,
+                                               this._ticketProviderActors
+                                               );
+        }
+
+        private void SetupRandomExceptionScheduler(double exceptionProbability, int interval, string coordinatorActorPath)
+        {
             if (interval > 0)
             {
-                minCount = this.InputFile.NewActorCount.BrokerActor.MinCount;
-                maxCount = this.InputFile.NewActorCount.BrokerActor.MaxCount;
-
-                AddRandomCountActorMessage addBrokerActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
+                RandomExceptionMessage randomExceptionMessage = new RandomExceptionMessage(exceptionProbability);
 
                 TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
                     TimeSpan.FromSeconds(0),
                     TimeSpan.FromSeconds(interval),
-                    TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this.brokerCoordinatorActorPath),
-                    addBrokerActorMessage,
-                    Self);
-            }
-
-            interval = this.InputFile.NewActorMessageInterval.TicketProviderActor;
-            if (interval > 0)
-            {
-                minCount = this.InputFile.NewActorCount.TicketProviderActor.MinCount;
-                maxCount = this.InputFile.NewActorCount.TicketProviderActor.MaxCount;
-
-                AddRandomCountActorMessage addTicketProviderActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
-
-                TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
-                    TimeSpan.FromSeconds(0),
-                    TimeSpan.FromSeconds(interval),
-                    TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this.ticketProviderCoordinatorActorPath),
-                    addTicketProviderActorMessage,
+                    TicketBookingActorSystem.Instance.actorSystem.ActorSelection(coordinatorActorPath),
+                    randomExceptionMessage,
                     Self);
             }
         }

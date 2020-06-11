@@ -1,9 +1,11 @@
 ﻿using Akka.Actor;
 using Akka.Event;
+using MultiAgentBookingSystem.Actors.Common;
 using MultiAgentBookingSystem.DataResources;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Brokers;
+using MultiAgentBookingSystem.Messages.Common;
 using MultiAgentBookingSystem.Messages.Users;
 using MultiAgentBookingSystem.System;
 using System;
@@ -14,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors
 {
-    public class UserActor : ReceiveActor
+    public class UserActor : CoordinatorChildActor
     {
         private Guid id;
         private Dictionary<Guid, IActorRef> brokers;
@@ -41,80 +43,56 @@ namespace MultiAgentBookingSystem.Actors
 
             Receive<ReceiveTimeout>(message =>
             {
-                try
-                {
-                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                    this.GetAllBrokers();
-                }
-                catch (Exception exception)
-                {
-                    throw exception;
-                }
+                this.GetAllBrokers();
             });
 
             Receive<ReceiveAllBrokers>(message =>
             {
-                try
-                {
-                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                    this.brokers = new Dictionary<Guid, IActorRef>(message.brokers);
+                this.brokers = new Dictionary<Guid, IActorRef>(message.brokers);
 
-                    if (this.brokers.Count > 0)
-                    {
-                        Become(BookingTicketState);
-                    }
-                }
-                catch (Exception exception)
+                if (this.brokers.Count > 0)
                 {
-                    throw exception;
+                    Become(BookingTicketState);
                 }
+            });
+
+            Receive<RandomExceptionMessage>(message =>
+            {
+                this.HandleRandomException(message);
             });
         }
 
         private void BookingTicketState()
         {
-            try
-            {
-                Context.SetReceiveTimeout(TimeSpan.FromSeconds(30));
+            Context.SetReceiveTimeout(TimeSpan.FromSeconds(30));
 
-                this.BookTicketByBroker();
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+            this.BookTicketByBroker();
+
             Receive<ReceiveTimeout>(message =>
             {
-                try
-                {
-                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                    if (this.brokers?.Count > 0)
-                        this.BookTicketByBroker();
-                    else
-                        Become(LookingForBrokersState);
-                }
-                catch (Exception exception)
-                {
-                    throw exception;
-                }
+                if (this.brokers?.Count > 0)
+                    this.BookTicketByBroker();
+                else
+                    Become(LookingForBrokersState);
             });
 
             Receive<TicketProviderConfirmationMessage>(message =>
             {
-                try
-                {
-                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                    LoggingConfiguration.Instance.LogTicketProviderBookingMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, this.ticketRoute, this.id);
-                    Context.Stop(Self);
-                }
-                catch (Exception exception)
-                {
-                    throw exception;
-                }
+                LoggingConfiguration.Instance.LogTicketProviderBookingMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, this.ticketRoute, this.id);
+                Context.Stop(Self);
+            });
+
+            Receive<RandomExceptionMessage>(message =>
+            {
+                this.HandleRandomException(message);
             });
         }
 

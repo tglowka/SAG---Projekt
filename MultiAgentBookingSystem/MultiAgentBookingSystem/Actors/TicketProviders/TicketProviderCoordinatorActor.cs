@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors
 {
-    public class TicketProviderCoordinatorActor : CustomActor<TicketProviderActor>
+    public class TicketProviderCoordinatorActor : CoordinatoActor<TicketProviderActor>
     {
         public TicketProviderCoordinatorActor()
         {

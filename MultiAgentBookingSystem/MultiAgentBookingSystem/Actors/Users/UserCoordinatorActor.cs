@@ -2,6 +2,7 @@
 using Akka.Event;
 using MultiAgentBookingSystem.Actors.Common;
 using MultiAgentBookingSystem.DataResources;
+using MultiAgentBookingSystem.Exceptions.Common;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Abstracts;
@@ -14,7 +15,7 @@ using System.Threading;
 
 namespace MultiAgentBookingSystem.Actors
 {
-    public class UserCoordinatorActor : CustomActor<UserActor>
+    public class UserCoordinatorActor : CoordinatoActor<UserActor>
     {
         public UserCoordinatorActor()
         {
@@ -57,34 +58,6 @@ namespace MultiAgentBookingSystem.Actors
             {
                 this.LogChildrenCount(this.GetType(), Self.Path);
             });
-        }
-
-        #endregion
-
-        #region protected methods
-        protected override SupervisorStrategy SupervisorStrategy()
-        {
-            return new OneForOneStrategy(
-                null,
-                null,
-                localOnlyDecider: ex =>
-                {
-                    //                  switch (ex)
-                    //                {
-                    //case ArithmeticException ae:
-                    //    return Directive.Resume;
-                    //case NullReferenceException nre:
-                    //    return Directive.Restart;
-                    //case ArgumentException are:
-                    //    Console.WriteLine("EEEEEEEERRRRRRRRRRROOOOOOOOORRRRRRRRRRRRRRRRRRR");
-                    //    UserActorStopException userActorStopException = ex as UserActorStopException;
-                    //    this.childrenActors.Remove(userActorStopException.Id);
-                    //    return Directive.Stop;
-                    //default:
-                    //    return Directive.Escalate;
-                    return Directive.Resume;
-                    //                    }
-                });
         }
 
         #endregion

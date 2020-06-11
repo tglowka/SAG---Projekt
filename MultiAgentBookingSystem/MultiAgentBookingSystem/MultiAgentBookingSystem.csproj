@@ -103,10 +103,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActorModel.cs" />
     <Compile Include="Actors\Brokers\BrokerActor.cs" />
     <Compile Include="Actors\Brokers\BrokerCoordinatorActor.cs" />
-    <Compile Include="Actors\Common\CustomActor.cs" />
+    <Compile Include="Actors\Common\CoordinatorActor.cs" />
+    <Compile Include="Actors\Common\CoordinatorChildActor.cs" />
     <Compile Include="Actors\Supervisor\SystemSupervisorActor.cs" />
     <Compile Include="Actors\TicketProviders\TicketProviderActor.cs" />
     <Compile Include="Actors\TicketProviders\TicketProviderCoordinatorActor.cs" />
@@ -115,6 +115,7 @@
     <Compile Include="ColorConsole.cs" />
     <Compile Include="DataResources\RandomGenerator.cs" />
     <Compile Include="DataResources\TicketsHelper.cs" />
+    <Compile Include="Exceptions\Common\RandomException.cs" />
     <Compile Include="Logger\LoggingConfiguration.cs" />
     <Compile Include="Messages\Brokers\BookTicketByBrokerMessage.cs" />
     <Compile Include="Messages\Brokers\TicketProviderConfirmationMessage.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Messages\Common\AddActorMessage.cs" />
     <Compile Include="Messages\Common\AddRandomCountActorMessage.cs" />
     <Compile Include="Messages\Common\LogChildernCountMessage.cs" />
+    <Compile Include="Messages\Common\RandomExceptionMessage.cs" />
     <Compile Include="Messages\Common\RemoveActorMessage.cs" />
     <Compile Include="Messages\Brokers\GetAllBrokersMessage.cs" />
     <Compile Include="Messages\TicketProviders\BookTicketMessage.cs" />
@@ -134,6 +136,8 @@
     <Compile Include="SystemTest\Models\MinMaxCount.cs" />
     <Compile Include="SystemTest\Models\NewActorCount.cs" />
     <Compile Include="SystemTest\Models\NewActorMessageInterval.cs" />
+    <Compile Include="SystemTest\Models\RandomExceptionMessageInterval.cs" />
+    <Compile Include="SystemTest\Models\RandomExceptionMessageProbability.cs" />
     <Compile Include="SystemTest\Services\SystemTestsService.cs" />
     <Compile Include="SystemTest\TestsSupervisorActor.cs" />
     <Compile Include="System\ActorMetaData.cs" />

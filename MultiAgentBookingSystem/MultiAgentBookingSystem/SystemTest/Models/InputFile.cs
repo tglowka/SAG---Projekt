@@ -8,8 +8,10 @@ namespace MultiAgentBookingSystem.SystemTest.Models
 {
     public class InputFile
     {
-        public InitialActorCount InitialActorCount;
-        public NewActorMessageInterval NewActorMessageInterval;
-        public NewActorCount NewActorCount;
+        public InitialActorCount InitialActorCount { get; set; }
+        public NewActorMessageInterval NewActorMessageInterval { get; set; }
+        public NewActorCount NewActorCount { get; set; }
+        public RandomExceptionMessageProbability RandomExceptionMessageProbability { get; set; }
+        public RandomExceptionMessageInterval RandomExceptionMessageInterval { get; set; }
     }
 }

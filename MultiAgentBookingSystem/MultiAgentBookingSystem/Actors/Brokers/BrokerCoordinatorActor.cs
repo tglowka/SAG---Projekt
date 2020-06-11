@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors
 {
-    public class BrokerCoordinatorActor : CustomActor<BrokerActor>
+    public class BrokerCoordinatorActor : CoordinatoActor<BrokerActor>
     {
         public BrokerCoordinatorActor()
         {

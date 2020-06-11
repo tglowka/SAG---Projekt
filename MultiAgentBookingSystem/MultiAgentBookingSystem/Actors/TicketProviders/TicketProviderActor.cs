@@ -4,6 +4,7 @@ using MultiAgentBookingSystem.Actors.Common;
 using MultiAgentBookingSystem.DataResources;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages.Brokers;
+using MultiAgentBookingSystem.Messages.Common;
 using MultiAgentBookingSystem.Messages.TicketProviders;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors
 {
-    public class TicketProviderActor : ReceiveActor
+    public class TicketProviderActor : CoordinatorChildActor
     {
         private Guid id;
 
@@ -68,6 +69,11 @@ namespace MultiAgentBookingSystem.Actors
                 {
                     throw exception;
                 }
+            });
+
+            Receive<RandomExceptionMessage>(message =>
+            {
+                this.HandleRandomException(message);
             });
         }
 

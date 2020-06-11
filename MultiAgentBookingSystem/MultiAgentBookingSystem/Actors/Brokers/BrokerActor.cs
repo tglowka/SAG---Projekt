@@ -1,7 +1,9 @@
 ﻿using Akka.Actor;
 using Akka.Event;
+using MultiAgentBookingSystem.Actors.Common;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages.Brokers;
+using MultiAgentBookingSystem.Messages.Common;
 using MultiAgentBookingSystem.Messages.TicketProviders;
 using MultiAgentBookingSystem.Messages.Users;
 using MultiAgentBookingSystem.System;
@@ -13,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors
 {
-    public class BrokerActor : ReceiveActor
+    public class BrokerActor : CoordinatorChildActor
     {
         private Guid id;
 
@@ -70,6 +72,11 @@ namespace MultiAgentBookingSystem.Actors
                 {
                     throw exception;
                 }
+            });
+
+            Receive<RandomExceptionMessage>(message =>
+            {
+                this.HandleRandomException(message);
             });
         }
 

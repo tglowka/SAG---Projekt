@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Event;
 using MultiAgentBookingSystem.DataResources;
+using MultiAgentBookingSystem.Exceptions.Common;
 using MultiAgentBookingSystem.Logger;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors.Common
 {
-    public abstract class CustomActor<TParentOf> : ReceiveActor where TParentOf : class
+    public abstract class CoordinatoActor<TParentOf> : ReceiveActor where TParentOf : class
     {
         protected Dictionary<Guid, IActorRef> childrenActors = new Dictionary<Guid, IActorRef>();
 
@@ -54,6 +55,23 @@ namespace MultiAgentBookingSystem.Actors.Common
         {
             LoggingConfiguration.Instance.LogActiveActorCount(Context.GetLogger(), actorType, actorPath, Context.GetChildren().Count());
             LoggingConfiguration.Instance.LogAllActorCount(Context.GetLogger(), actorType, actorPath, this.childrenActors.Count);
+        }
+
+        protected override SupervisorStrategy SupervisorStrategy()
+        {
+            return new OneForOneStrategy(
+                localOnlyDecider: ex =>
+                {
+                    switch (ex)
+                    {
+                        case RandomException randomException:
+                            LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), typeof(TParentOf), randomException.ActorPath.ToStringWithoutAddress(), ex.GetType());
+                            return Directive.Resume;
+                        default:
+                            LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), typeof(TParentOf), "Unknown actor path", ex.GetType());
+                            return Directive.Resume;
+                    }
+                });
         }
     }
 }

@@ -135,6 +135,8 @@
     <Compile Include="SystemTest\Models\NewActorMessageInterval.cs" />
     <Compile Include="SystemTest\Services\SystemTestsService.cs" />
     <Compile Include="SystemTest\TestsSupervisorActor.cs" />
+    <Compile Include="System\ActorMetaData.cs" />
+    <Compile Include="System\ActorPaths.cs" />
     <Compile Include="System\SystemConstants.cs" />
     <Compile Include="System\TicketBookingActorSystem.cs" />
   </ItemGroup>

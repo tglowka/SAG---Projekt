@@ -13,17 +13,9 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors
 {
-    public class BrokerActor : ReceiveActor, IWithUnboundedStash
+    public class BrokerActor : ReceiveActor
     {
         private Guid id;
-
-        private Guid currentSupportedUserActorId;
-        private string currentSupportedUserActorTicketRoute;
-        private IActorRef currentSupportedUserActorRef;
-
-        private Guid currentSupportedTicketProviderId = Guid.Empty;
-
-        public IStash Stash { get; set; }
 
         public BrokerActor(Guid id)
         {
@@ -38,54 +30,13 @@ namespace MultiAgentBookingSystem.Actors
 
         private void WaitingForUserActorState()
         {
-            Context.SetReceiveTimeout(null);
-
-            this.ClearCurrentContext();
-
             Receive<BookTicketByBrokerMessage>(message =>
             {
                 try
                 {
                     LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                    this.SetCurrentContext(message.UserActorId, message.TicketRoute, Sender, Guid.Empty);
-                    this.NotifyTicketProviders(message.UserActorId, message.TicketRoute);
-
-                    Become(BookingState);
-                }
-                catch (Exception exception)
-                {
-                    throw exception;
-                }
-            });
-        }
-
-        private void BookingState()
-        {
-            Context.SetReceiveTimeout(TimeSpan.FromSeconds(2));
-
-            Receive<ReceiveTimeout>(message =>
-            {
-                try
-                {
-                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-                    
-                    Stash.UnstashAll();
-                    Become(WaitingForUserActorState);
-                }
-                catch (Exception exception)
-                {
-                    throw exception;
-                }
-            });
-
-            Receive<BookTicketByBrokerMessage>(message =>
-            {
-                try
-                {
-                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
-                    Stash.Stash();
+                    this.NotifyTicketProviders(message);
                 }
                 catch (Exception exception)
                 {
@@ -99,16 +50,12 @@ namespace MultiAgentBookingSystem.Actors
                 {
                     LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                    this.SetCurrentContext(this.currentSupportedUserActorId, this.currentSupportedUserActorTicketRoute, this.currentSupportedUserActorRef, message.TicketProviderId);
-
-                    if (this.CheckWithCurrentContext(message.UserActorId, message.TicketRoute, message.TicketProviderId))
-                        this.BookTicket(Sender, message.UserActorId, message.TicketRoute);
+                    this.BookTicket(Sender, message);
                 }
                 catch (Exception exception)
                 {
                     throw exception;
                 }
-
             });
 
             Receive<TicketProviderConfirmationMessage>(message =>
@@ -118,9 +65,6 @@ namespace MultiAgentBookingSystem.Actors
                     LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
                     this.NotifyUserAboutConfirmation(message);
-
-                    Stash.UnstashAll();
-                    Become(WaitingForUserActorState);
                 }
                 catch (Exception exception)
                 {
@@ -130,55 +74,16 @@ namespace MultiAgentBookingSystem.Actors
         }
 
         /// <summary>
-        ///     Set broker's current context.
-        /// </summary>
-        /// <param name="userActorId">User actor id</param>
-        /// <param name="ticketRoute">Desired ticket route for user actor</param>
-        private void SetCurrentContext(Guid userActorId, string ticketRoute, IActorRef userActorRef, Guid ticketProviderId)
-        {
-            this.currentSupportedUserActorId = userActorId;
-            this.currentSupportedUserActorTicketRoute = ticketRoute;
-            this.currentSupportedUserActorRef = userActorRef;
-
-            if (this.currentSupportedTicketProviderId == Guid.Empty)
-                this.currentSupportedTicketProviderId = ticketProviderId;
-        }
-
-        /// <summary>
-        ///     Clear broker's current context.
-        /// </summary>
-        private void ClearCurrentContext()
-        {
-            this.currentSupportedUserActorId = Guid.Empty;
-            this.currentSupportedUserActorTicketRoute = String.Empty;
-            this.currentSupportedUserActorRef = null;
-            this.currentSupportedTicketProviderId = Guid.Empty;
-        }
-
-        /// <summary>
-        ///     Check whether user actor id and ticket route match with current context.
-        /// </summary>
-        /// <param name="userId">User actor id</param>
-        /// <param name="ticketRoute">Ticket route</param>
-        /// <param name="ticketProviderId">Ticket provider id</param>
-        /// <returns></returns>
-        private bool CheckWithCurrentContext(Guid userId, string ticketRoute, Guid ticketProviderId)
-        {
-            return this.currentSupportedUserActorId == userId
-                && this.currentSupportedUserActorTicketRoute == ticketRoute
-                && this.currentSupportedTicketProviderId == ticketProviderId;
-        }
-
-        /// <summary>
         ///     Send notification to all ticket providers that particular user want to buy a ticket on particular route.
         /// </summary>
         /// <param name="userActorId">User actor id</param>
         /// <param name="ticketRoute">Ticket route</param>
-        private void NotifyTicketProviders(Guid userActorId, string ticketRoute)
+        private void NotifyTicketProviders(BookTicketByBrokerMessage message)
         {
-            NotifyTicketProvidersMessage notifyTicketProvidersMessage = new NotifyTicketProvidersMessage(userActorId, ticketRoute);
+            NotifyTicketProvidersMessage notifyTicketProvidersMessage = new NotifyTicketProvidersMessage(message.UserActor, message.UserActorId, message.TicketRoute);
+            string allTicketProviders = $"{ActorPaths.TicketProviderCoordinatorActor.Path}/*";
 
-            TicketBookingActorSystem.Instance.actorSystem.ActorSelection("/user/SystemSupervisor/TicketProviderCoordinator/*").Tell(notifyTicketProvidersMessage);
+            TicketBookingActorSystem.Instance.actorSystem.ActorSelection(allTicketProviders).Tell(notifyTicketProvidersMessage);
 
             LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, notifyTicketProvidersMessage.GetType(), "All ticket providers.");
         }
@@ -189,9 +94,9 @@ namespace MultiAgentBookingSystem.Actors
         /// <param name="sender">Ticket provider</param>
         /// <param name="userActorId">User actor id</param>
         /// <param name="ticketRoute">Ticket route</param>
-        private void BookTicket(IActorRef sender, Guid userActorId, string ticketRoute)
+        private void BookTicket(IActorRef sender, TicketProviderResponseMessage message)
         {
-            BookTicketMessage bookTicketMessage = new BookTicketMessage(userActorId, ticketRoute);
+            BookTicketMessage bookTicketMessage = new BookTicketMessage(message.UserActor, message.UserActorId, message.TicketRoute);
 
             sender.Tell(bookTicketMessage);
 
@@ -203,9 +108,9 @@ namespace MultiAgentBookingSystem.Actors
         /// </summary>
         private void NotifyUserAboutConfirmation(TicketProviderConfirmationMessage message)
         {
-            this.currentSupportedUserActorRef.Forward(message);
+            message.UserActor.Forward(message);
 
-            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), this.currentSupportedUserActorRef.Path.ToStringWithoutAddress());
+            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), message.UserActor.Path.ToStringWithoutAddress());
         }
 
         #endregion

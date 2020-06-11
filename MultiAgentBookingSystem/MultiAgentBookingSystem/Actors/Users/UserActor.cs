@@ -77,7 +77,7 @@ namespace MultiAgentBookingSystem.Actors
         {
             try
             {
-                Context.SetReceiveTimeout(TimeSpan.FromSeconds(5));
+                Context.SetReceiveTimeout(TimeSpan.FromSeconds(30));
 
                 this.BookTicketByBroker();
             }
@@ -141,7 +141,7 @@ namespace MultiAgentBookingSystem.Actors
             IActorRef randomBrokerActor = this.brokers[randomBroker];
             this.brokers.Remove(randomBroker);
 
-            BookTicketByBrokerMessage bookTicketByBrokerMessage = new BookTicketByBrokerMessage(this.id, this.ticketRoute);
+            BookTicketByBrokerMessage bookTicketByBrokerMessage = new BookTicketByBrokerMessage(Self, this.id, this.ticketRoute);
             randomBrokerActor.Tell(bookTicketByBrokerMessage);
 
             LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, bookTicketByBrokerMessage.GetType(), randomBrokerActor.Path.ToStringWithoutAddress());

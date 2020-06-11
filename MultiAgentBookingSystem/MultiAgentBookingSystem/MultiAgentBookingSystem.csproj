@@ -152,10 +152,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Exceptions\Brokers\" />
-    <Folder Include="Exceptions\TicketProviders\" />
-    <Folder Include="Exceptions\Users\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

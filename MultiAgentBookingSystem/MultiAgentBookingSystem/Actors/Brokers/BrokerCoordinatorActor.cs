@@ -60,6 +60,11 @@ namespace MultiAgentBookingSystem.Actors
 
                 this.SendAllBrokers(Sender);
             });
+
+            Receive<RandomExceptionMessage>(message =>
+            {
+                this.HandleRandomException(message, this.GetType());
+            });
         }
 
         private void SendAllBrokers(IActorRef sender)

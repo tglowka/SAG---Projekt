@@ -76,7 +76,7 @@ namespace MultiAgentBookingSystem.Actors
 
             Receive<RandomExceptionMessage>(message =>
             {
-                this.HandleRandomException(message);
+                this.HandleRandomException(message, this.GetType());
             });
         }
 

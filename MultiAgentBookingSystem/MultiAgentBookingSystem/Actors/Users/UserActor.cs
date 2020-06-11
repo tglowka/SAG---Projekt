@@ -62,7 +62,7 @@ namespace MultiAgentBookingSystem.Actors
 
             Receive<RandomExceptionMessage>(message =>
             {
-                this.HandleRandomException(message);
+                this.HandleRandomException(message, this.GetType());
             });
         }
 
@@ -92,7 +92,7 @@ namespace MultiAgentBookingSystem.Actors
 
             Receive<RandomExceptionMessage>(message =>
             {
-                this.HandleRandomException(message);
+                this.HandleRandomException(message, this.GetType());
             });
         }
 
@@ -124,7 +124,6 @@ namespace MultiAgentBookingSystem.Actors
 
             LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, bookTicketByBrokerMessage.GetType(), randomBrokerActor.Path.ToStringWithoutAddress());
         }
-
 
 
         #endregion

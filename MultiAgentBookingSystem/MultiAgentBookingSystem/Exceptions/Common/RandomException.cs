@@ -10,10 +10,12 @@ namespace MultiAgentBookingSystem.Exceptions.Common
     public class RandomException : Exception
     {
         public ActorPath ActorPath { get; private set; }
+        public Type ActorType { get; private set; }
 
-        public RandomException(ActorPath actorPath) : base()
+        public RandomException(ActorPath actorPath, Type actorType) : base()
         {
             this.ActorPath = actorPath;
+            this.ActorType = actorType;
         }
     }
 }

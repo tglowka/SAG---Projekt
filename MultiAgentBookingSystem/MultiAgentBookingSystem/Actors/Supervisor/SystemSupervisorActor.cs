@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Event;
 using MultiAgentBookingSystem.DataResources;
+using MultiAgentBookingSystem.Exceptions.Common;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages.Abstracts;
 using MultiAgentBookingSystem.Messages.Common;
@@ -37,6 +38,22 @@ namespace MultiAgentBookingSystem.Actors
                     this.UserCoordinatorActor,
                     logChildernCountMessage,
                     Self);
+        }
+
+        protected override SupervisorStrategy SupervisorStrategy()
+        {
+            return new OneForOneStrategy(
+                localOnlyDecider: ex =>
+                {
+                    switch (ex)
+                    {
+                        case RandomException randomException:
+                            return Directive.Resume;
+                        default:
+                            LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), this.GetType(), "Unknown actor", ex.GetType());
+                            return Directive.Resume;
+                    }
+                });
         }
 
         #region Lifecycle hooks

@@ -52,6 +52,11 @@ namespace MultiAgentBookingSystem.Actors
 
                 this.RemoveChildActor(message.ActorId);
             });
+
+            Receive<RandomExceptionMessage>(message =>
+            {
+                this.HandleRandomException(message, this.GetType());
+            });
         }
 
         #endregion

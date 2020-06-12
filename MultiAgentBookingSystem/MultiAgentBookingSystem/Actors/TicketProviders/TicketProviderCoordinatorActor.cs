@@ -7,6 +7,7 @@ using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Abstracts;
 using MultiAgentBookingSystem.Messages.Brokers;
 using MultiAgentBookingSystem.Messages.Common;
+using MultiAgentBookingSystem.Messages.TicketProviders;
 using MultiAgentBookingSystem.System;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace MultiAgentBookingSystem.Actors
     {
         public TicketProviderCoordinatorActor()
         {
+            this.SetupBookedTicketsCountScheduler(5);
+
             this.Become(this.InitialState);
         }
 
@@ -87,6 +90,18 @@ namespace MultiAgentBookingSystem.Actors
             ReceiveAllTicketProvidersMessage receiveAllTicketProvidersMessage = new ReceiveAllTicketProvidersMessage(Context.GetChildren());
 
             TicketBookingActorSystem.Instance.actorSystem.ActorSelection(ActorPaths.BrokerActors.Path).Tell(receiveAllTicketProvidersMessage);
+        }
+
+        private void SetupBookedTicketsCountScheduler(int interval)
+        {
+            LogBookedTicketCountMessage logBookedTicketCountMessage = new LogBookedTicketCountMessage();
+
+            TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
+                    TimeSpan.FromSeconds(0),
+                    TimeSpan.FromSeconds(interval),
+                    TicketBookingActorSystem.Instance.actorSystem.ActorSelection(ActorPaths.TickerProviderActors.Path),
+                    logBookedTicketCountMessage,
+                    Self);
         }
 
         #endregion

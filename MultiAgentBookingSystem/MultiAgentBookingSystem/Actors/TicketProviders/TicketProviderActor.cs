@@ -49,6 +49,13 @@ namespace MultiAgentBookingSystem.Actors
                 this.BookTicketForUser(message);
             });
 
+            Receive<LogBookedTicketCountMessage>(message =>
+            {
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+
+                LoggingConfiguration.Instance.LogTicketProviderBookedTicketCountMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, this.bookedTickets.Count);
+            });
+
             Receive<RandomExceptionMessage>(message =>
             {
                 this.HandleRandomException(message, this.GetType());

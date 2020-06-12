@@ -130,6 +130,7 @@
     <Compile Include="Messages\Common\RemoveActorMessage.cs" />
     <Compile Include="Messages\Brokers\GetAllBrokersMessage.cs" />
     <Compile Include="Messages\TicketProviders\BookTicketMessage.cs" />
+    <Compile Include="Messages\TicketProviders\LogBookedTicketCountMessage.cs" />
     <Compile Include="Messages\TicketProviders\NotifyTicketProvidersMessage.cs" />
     <Compile Include="Messages\Users\NoAvailableTicketMessage.cs" />
     <Compile Include="Messages\Users\ReceiveAllBrokers.cs" />

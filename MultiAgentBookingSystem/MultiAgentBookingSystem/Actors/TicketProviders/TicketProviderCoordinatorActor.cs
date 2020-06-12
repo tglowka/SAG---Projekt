@@ -5,7 +5,9 @@ using MultiAgentBookingSystem.DataResources;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages;
 using MultiAgentBookingSystem.Messages.Abstracts;
+using MultiAgentBookingSystem.Messages.Brokers;
 using MultiAgentBookingSystem.Messages.Common;
+using MultiAgentBookingSystem.System;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +39,7 @@ namespace MultiAgentBookingSystem.Actors
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
                 this.CreateChildActor(message.ActorCount);
+                this.SendAllTicketProvidersToAllBrokers();
             });
 
             Receive<AddRandomCountActorMessage>(message =>
@@ -44,6 +47,7 @@ namespace MultiAgentBookingSystem.Actors
                 LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
                 this.CreateChildActor(message.MinActorCount, message.MaxActorCount);
+                this.SendAllTicketProvidersToAllBrokers();
             });
 
             Receive<RemoveActorMessage>(message =>
@@ -52,6 +56,13 @@ namespace MultiAgentBookingSystem.Actors
 
                 this.RemoveChildActor(message.ActorId);
             });
+
+            Receive<GetAllTicketProvidersMessage>(message =>
+           {
+               LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+
+               this.SendAllTicketProviders();
+           });
 
             Receive<LogChildernCountMessage>(message =>
             {
@@ -62,6 +73,20 @@ namespace MultiAgentBookingSystem.Actors
             {
                 this.HandleRandomException(message, this.GetType());
             });
+        }
+
+        private void SendAllTicketProviders()
+        {
+            ReceiveAllTicketProvidersMessage receiveAllTicketProvidersMessage = new ReceiveAllTicketProvidersMessage(Context.GetChildren());
+
+            Sender.Tell(receiveAllTicketProvidersMessage);
+        }
+
+        private void SendAllTicketProvidersToAllBrokers()
+        {
+            ReceiveAllTicketProvidersMessage receiveAllTicketProvidersMessage = new ReceiveAllTicketProvidersMessage(Context.GetChildren());
+
+            TicketBookingActorSystem.Instance.actorSystem.ActorSelection(ActorPaths.BrokerActors.Path).Tell(receiveAllTicketProvidersMessage);
         }
 
         #endregion

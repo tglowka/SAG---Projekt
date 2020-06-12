@@ -6,11 +6,10 @@ using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages.Brokers;
 using MultiAgentBookingSystem.Messages.Common;
 using MultiAgentBookingSystem.Messages.TicketProviders;
+using MultiAgentBookingSystem.Messages.Users;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace MultiAgentBookingSystem.Actors
 {
@@ -36,34 +35,18 @@ namespace MultiAgentBookingSystem.Actors
 
         private void WaitingForBrokerState()
         {
-            Context.SetReceiveTimeout(null);
-
             Receive<NotifyTicketProvidersMessage>(message =>
             {
-                try
-                {
-                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                    this.NotifyBrokerAboutTicketAvailability(message, Sender);
-                }
-                catch (Exception exception)
-                {
-                    throw exception;
-                }
+                this.NotifyBrokerAboutTicketAvailability(message);
             });
 
             Receive<BookTicketMessage>(message =>
             {
-                try
-                {
-                    LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
 
-                    this.BookTicketForUser(Sender, message);
-                }
-                catch (Exception exception)
-                {
-                    throw exception;
-                }
+                this.BookTicketForUser(message);
             });
 
             Receive<RandomExceptionMessage>(message =>
@@ -77,23 +60,35 @@ namespace MultiAgentBookingSystem.Actors
         /// </summary>
         /// <param name="userActorId">User actor id</param>
         /// <param name="ticketRoute">Desired ticket route</param>
-        private void NotifyBrokerAboutTicketAvailability(NotifyTicketProvidersMessage message, IActorRef broker)
+        private void NotifyBrokerAboutTicketAvailability(NotifyTicketProvidersMessage message)
         {
             if (this.offeredTickets.ContainsKey(message.TicketRoute) && this.offeredTickets[message.TicketRoute] > 0 && !this.bookedTickets.ContainsKey(message.UserActorId))
             {
                 TicketProviderResponseMessage ticketProviderResponseMessage = new TicketProviderResponseMessage(message.UserActor, message.UserActorId, message.TicketRoute, this.id);
 
-                broker.Tell(ticketProviderResponseMessage);
+                Sender.Tell(ticketProviderResponseMessage);
 
-                LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, ticketProviderResponseMessage.GetType(), broker.Path.ToStringWithoutAddress());
+                LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, ticketProviderResponseMessage.GetType(), Sender.Path.ToStringWithoutAddress());
             }
             else if (this.offeredTickets.ContainsKey(message.TicketRoute) && this.offeredTickets[message.TicketRoute] == 0)
             {
                 ++this.offeredTickets[message.TicketRoute];
+
+                NoAvailableTicketMessage noAvailableTicketMessage = new NoAvailableTicketMessage(message.UserActor, message.UserActorId, message.TicketRoute);
+
+                Sender.Tell(noAvailableTicketMessage);
+
+                LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, noAvailableTicketMessage.GetType(), Sender.Path.ToStringWithoutAddress());
             }
             else if (!this.offeredTickets.ContainsKey(message.TicketRoute))
             {
                 this.offeredTickets.Add(message.TicketRoute, 1);
+
+                NoAvailableTicketMessage noAvailableTicketMessage = new NoAvailableTicketMessage(message.UserActor, message.UserActorId, message.TicketRoute);
+
+                Sender.Tell(noAvailableTicketMessage);
+
+                LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, noAvailableTicketMessage.GetType(), Sender.Path.ToStringWithoutAddress());
             }
         }
 
@@ -102,25 +97,43 @@ namespace MultiAgentBookingSystem.Actors
         /// </summary>
         /// <param name="userActorId">User actor id</param>
         /// <param name="ticketRoute">Desired ticket route</param>
-        private void BookTicketForUser(IActorRef broker, BookTicketMessage message)
+        private void BookTicketForUser(BookTicketMessage message)
         {
             if (this.offeredTickets.ContainsKey(message.TicketRoute) && this.offeredTickets[message.TicketRoute] > 0 && !this.bookedTickets.ContainsKey(message.UserActorId))
             {
                 this.bookedTickets.Add(message.UserActorId, message.TicketRoute);
                 --this.offeredTickets[message.TicketRoute];
+
                 TicketProviderConfirmationMessage ticketProviderConfirmationMessage = new TicketProviderConfirmationMessage(message.UserActor, message.UserActorId, message.TicketRoute, this.id);
 
-                broker.Tell(ticketProviderConfirmationMessage);
+                LoggingConfiguration.Instance.LogTicketProviderBookingMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.TicketRoute, message.UserActorId);
 
-                LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, ticketProviderConfirmationMessage.GetType(), broker.Path.ToStringWithoutAddress());
+                Sender.Tell(ticketProviderConfirmationMessage);
+
+                LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, ticketProviderConfirmationMessage.GetType(), Sender.Path.ToStringWithoutAddress());
+
             }
             else if (this.offeredTickets.ContainsKey(message.TicketRoute) && this.offeredTickets[message.TicketRoute] == 0)
             {
                 ++this.offeredTickets[message.TicketRoute];
+
+                NoAvailableTicketMessage noAvailableTicketMessage = new NoAvailableTicketMessage(message.UserActor, message.UserActorId, message.TicketRoute);
+
+                Sender.Tell(noAvailableTicketMessage);
+
+                LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, noAvailableTicketMessage.GetType(), Sender.Path.ToStringWithoutAddress());
+
             }
             else if (!this.offeredTickets.ContainsKey(message.TicketRoute))
             {
                 this.offeredTickets.Add(message.TicketRoute, 1);
+
+                NoAvailableTicketMessage noAvailableTicketMessage = new NoAvailableTicketMessage(message.UserActor, message.UserActorId, message.TicketRoute);
+
+                Sender.Tell(noAvailableTicketMessage);
+
+                LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, noAvailableTicketMessage.GetType(), Sender.Path.ToStringWithoutAddress());
+
             }
         }
 

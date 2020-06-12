@@ -68,19 +68,9 @@ namespace MultiAgentBookingSystem.Actors
 
         private void BookingTicketState()
         {
-            Context.SetReceiveTimeout(TimeSpan.FromSeconds(30));
+            Context.SetReceiveTimeout(null);
 
             this.BookTicketByBroker();
-
-            Receive<ReceiveTimeout>(message =>
-            {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
-                if (this.brokers?.Count > 0)
-                    this.BookTicketByBroker();
-                else
-                    Become(LookingForBrokersState);
-            });
 
             Receive<TicketProviderConfirmationMessage>(message =>
             {
@@ -88,6 +78,16 @@ namespace MultiAgentBookingSystem.Actors
 
                 LoggingConfiguration.Instance.LogTicketProviderBookingMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, this.ticketRoute, this.id);
                 Context.Stop(Self);
+            });
+
+            Receive<NoAvailableTicketMessage>(message =>
+            {
+                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+
+                if (this.brokers?.Count > 0)
+                    this.BookTicketByBroker();
+                else
+                    Become(LookingForBrokersState);
             });
 
             Receive<RandomExceptionMessage>(message =>

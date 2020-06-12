@@ -116,8 +116,11 @@
     <Compile Include="DataResources\RandomGenerator.cs" />
     <Compile Include="DataResources\TicketsHelper.cs" />
     <Compile Include="Exceptions\Common\RandomException.cs" />
+    <Compile Include="Helpers\Helpers.cs" />
     <Compile Include="Logger\LoggingConfiguration.cs" />
     <Compile Include="Messages\Brokers\BookTicketByBrokerMessage.cs" />
+    <Compile Include="Messages\Brokers\GetAllTicketProvidersMessage.cs" />
+    <Compile Include="Messages\Brokers\ReceiveAllTicketProvidersMessage.cs" />
     <Compile Include="Messages\Brokers\TicketProviderConfirmationMessage.cs" />
     <Compile Include="Messages\Brokers\TicketProviderResponseMessage.cs" />
     <Compile Include="Messages\Common\AddActorMessage.cs" />
@@ -128,6 +131,7 @@
     <Compile Include="Messages\Brokers\GetAllBrokersMessage.cs" />
     <Compile Include="Messages\TicketProviders\BookTicketMessage.cs" />
     <Compile Include="Messages\TicketProviders\NotifyTicketProvidersMessage.cs" />
+    <Compile Include="Messages\Users\NoAvailableTicketMessage.cs" />
     <Compile Include="Messages\Users\ReceiveAllBrokers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

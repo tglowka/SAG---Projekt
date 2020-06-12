@@ -23,7 +23,6 @@ namespace MultiAgentBookingSystem
     {
         static void Main(string[] args)
         {
-
             // Setup logging for the actor system
             LoggingConfiguration.Instance.SetupLogger();
 

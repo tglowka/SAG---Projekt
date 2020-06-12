@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using MultiAgentBookingSystem.Actors;
+using MultiAgentBookingSystem.DataResources;
 using MultiAgentBookingSystem.Messages.Abstracts;
 using MultiAgentBookingSystem.Messages.Common;
 using MultiAgentBookingSystem.System;
@@ -38,6 +39,7 @@ namespace MultiAgentBookingSystem.SystemTest
 
         private void StartSimulation()
         {
+            this.SetupSingleRouteCount();
             this.SetupNewActorMessageSchedulers();
             this.SetupInitialActorCount();
             this.SetupRandomExceptionSchedulers();
@@ -152,6 +154,11 @@ namespace MultiAgentBookingSystem.SystemTest
                     randomExceptionMessage,
                     Self);
             }
+        }
+
+        private void SetupSingleRouteCount()
+        {
+            TicketsHelper.singleRouteCount = this.InputFile.InitiazlSingleRouteTicketsCount;
         }
 
         #endregion

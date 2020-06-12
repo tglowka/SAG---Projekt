@@ -13,5 +13,6 @@ namespace MultiAgentBookingSystem.SystemTest.Models
         public NewActorCount NewActorCount { get; set; }
         public RandomExceptionMessageProbability RandomExceptionMessageProbability { get; set; }
         public RandomExceptionMessageInterval RandomExceptionMessageInterval { get; set; }
+        public int InitiazlSingleRouteTicketsCount { get; set; }
     }
 }

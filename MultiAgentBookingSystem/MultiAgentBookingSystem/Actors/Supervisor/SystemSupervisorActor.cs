@@ -13,6 +13,8 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class SystemSupervisorActor : ReceiveActor
     {
+        private readonly int _logChildrenCountMessageInterval = 5;
+
         public IActorRef UserCoordinatorActor { get; private set; }
         public IActorRef BrokerCoordinatorActor { get; private set; }
         public IActorRef TicketProviderCoordinatorActor { get; private set; }
@@ -23,19 +25,24 @@ namespace MultiAgentBookingSystem.Actors
             this.BrokerCoordinatorActor = Context.ActorOf(Props.Create(() => new BrokerCoordinatorActor()), SystemConstants.BrokerCoordinatorActorName);
             this.TicketProviderCoordinatorActor = Context.ActorOf(Props.Create(() => new TicketProviderCoordinatorActor()), SystemConstants.TicketProviderCoordinatorActorName);
 
-            this.SetupScheduler();
+            this.SetupSchedulers();
         }
 
-        private void SetupScheduler()
+        private void SetupSchedulers()
         {
-            int interval = 5;
+            this.SetupChildrenCountScheduler(this._logChildrenCountMessageInterval, this.UserCoordinatorActor);
+            this.SetupChildrenCountScheduler(this._logChildrenCountMessageInterval, this.BrokerCoordinatorActor);
+            this.SetupChildrenCountScheduler(this._logChildrenCountMessageInterval, this.TicketProviderCoordinatorActor);
+        }
 
+        private void SetupChildrenCountScheduler(int interval, IActorRef actor)
+        {
             LogChildernCountMessage logChildernCountMessage = new LogChildernCountMessage();
 
             TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
                     TimeSpan.FromSeconds(0),
                     TimeSpan.FromSeconds(interval),
-                    this.UserCoordinatorActor,
+                    actor,
                     logChildernCountMessage,
                     Self);
         }

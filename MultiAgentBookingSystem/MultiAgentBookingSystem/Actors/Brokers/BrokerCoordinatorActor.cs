@@ -61,6 +61,11 @@ namespace MultiAgentBookingSystem.Actors
                 this.SendAllBrokers(Sender);
             });
 
+            Receive<LogChildernCountMessage>(message =>
+            {
+                this.LogChildrenCount(this.GetType(), Self.Path);
+            });
+
             Receive<RandomExceptionMessage>(message =>
             {
                 this.HandleRandomException(message, this.GetType());

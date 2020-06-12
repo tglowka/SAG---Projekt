@@ -11,7 +11,7 @@ namespace MultiAgentBookingSystem.DataResources
         /// <summary>
         ///     Max ticket count on particular route.
         /// </summary>
-        private static int singleRouteMaxCount = 5000;
+        public static int singleRouteCount = 0;
 
         /// <summary>
         ///     List of the possible routes that user actor is able to book.
@@ -50,11 +50,7 @@ namespace MultiAgentBookingSystem.DataResources
 
             for (int i = 0; i < possibleRoutes.Count; ++i)
             {
-                int offeredTicketCount = RandomGenerator.Instance.random.Next(singleRouteMaxCount);
-                if (offeredTicketCount > 0)
-                {
-                    offeredTickets.Add(possibleRoutes[i], offeredTicketCount);
-                }
+                offeredTickets.Add(possibleRoutes[i], singleRouteCount);
             }
 
             return offeredTickets;

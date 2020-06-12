@@ -29,11 +29,6 @@ namespace MultiAgentBookingSystem.Actors
             this.offeredTickets = TicketsHelper.GetRandomOfferedTickets();
             this.bookedTickets = new Dictionary<Guid, string>();
 
-            foreach (KeyValuePair<string, int> kvp in offeredTickets)
-            {
-                Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-            }
-
             Become(WaitingForBrokerState);
         }
 

@@ -257,10 +257,5 @@
         "HeightRows": 1
       }
     }
-  ],
-  "Id": "dashboard-14",
-  "Links": {
-    "Self": "api/dashboards/dashboard-14?version=97",
-    "Group": "api/dashboards/resources"
-  }
+  ]
 }

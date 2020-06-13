@@ -1,0 +1,155 @@
+{
+  "OwnerId": "user-admin",
+  "Title": "Production",
+  "IsProtected": false,
+  "SignalExpression": null,
+  "Charts": [
+    {
+      "Id": "chart-88",
+      "Title": "Booked Tickets By Ticket Providers (clone)",
+      "SignalExpression": null,
+      "Queries": [
+        {
+          "Id": "chartquery-89",
+          "Measurements": [
+            {
+              "Value": "bottom(BookedTicketCount,1)",
+              "Label": "count"
+            }
+          ],
+          "Where": "BookedTicketCount is not null",
+          "SignalExpression": null,
+          "GroupBy": [
+            "ActorPath"
+          ],
+          "DisplayStyle": {
+            "Type": "Table",
+            "LineFillToZeroY": false,
+            "LineShowMarkers": true,
+            "BarOverlaySum": false,
+            "SuppressLegend": false,
+            "Palette": "Default"
+          },
+          "Alerts": [],
+          "Having": null,
+          "OrderBy": [],
+          "Limit": null
+        }
+      ],
+      "DisplayStyle": {
+        "WidthColumns": 12,
+        "HeightRows": 1
+      }
+    },
+    {
+      "Id": "chart-86",
+      "Title": "Users Count",
+      "SignalExpression": null,
+      "Queries": [
+        {
+          "Id": "chartquery-87",
+          "Measurements": [
+            {
+              "Value": "bottom(AllChildActorCount,1)",
+              "Label": "count"
+            }
+          ],
+          "Where": "AllChildActorCount is not null and ActorType='UserCoordinatorActor'",
+          "SignalExpression": null,
+          "GroupBy": [],
+          "DisplayStyle": {
+            "Type": "Value",
+            "LineFillToZeroY": false,
+            "LineShowMarkers": true,
+            "BarOverlaySum": false,
+            "SuppressLegend": false,
+            "Palette": "Default"
+          },
+          "Alerts": [],
+          "Having": null,
+          "OrderBy": [],
+          "Limit": null
+        }
+      ],
+      "DisplayStyle": {
+        "WidthColumns": 4,
+        "HeightRows": 1
+      }
+    },
+    {
+      "Id": "chart-82",
+      "Title": "Brokers Count",
+      "SignalExpression": null,
+      "Queries": [
+        {
+          "Id": "chartquery-83",
+          "Measurements": [
+            {
+              "Value": "bottom(ChildActorCount,1)",
+              "Label": "count"
+            }
+          ],
+          "Where": "ChildActorCount is not null and ActorType='BrokerCoordinatorActor'",
+          "SignalExpression": null,
+          "GroupBy": [],
+          "DisplayStyle": {
+            "Type": "Value",
+            "LineFillToZeroY": false,
+            "LineShowMarkers": true,
+            "BarOverlaySum": false,
+            "SuppressLegend": false,
+            "Palette": "Default"
+          },
+          "Alerts": [],
+          "Having": null,
+          "OrderBy": [],
+          "Limit": null
+        }
+      ],
+      "DisplayStyle": {
+        "WidthColumns": 4,
+        "HeightRows": 1
+      }
+    },
+    {
+      "Id": "chart-84",
+      "Title": "Ticket Providers Count",
+      "SignalExpression": null,
+      "Queries": [
+        {
+          "Id": "chartquery-85",
+          "Measurements": [
+            {
+              "Value": "bottom(ChildActorCount,1)",
+              "Label": "count"
+            }
+          ],
+          "Where": "ChildActorCount is not null and ActorType='TicketProviderCoordinatorActor'",
+          "SignalExpression": null,
+          "GroupBy": [],
+          "DisplayStyle": {
+            "Type": "Value",
+            "LineFillToZeroY": false,
+            "LineShowMarkers": true,
+            "BarOverlaySum": false,
+            "SuppressLegend": false,
+            "Palette": "Default"
+          },
+          "Alerts": [],
+          "Having": null,
+          "OrderBy": [],
+          "Limit": null
+        }
+      ],
+      "DisplayStyle": {
+        "WidthColumns": 4,
+        "HeightRows": 1
+      }
+    }
+  ],
+  "Id": "dashboard-79",
+  "Links": {
+    "Self": "api/dashboards/dashboard-79?version=19",
+    "Group": "api/dashboards/resources"
+  }
+}

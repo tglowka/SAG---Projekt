@@ -1,0 +1,266 @@
+{
+  "OwnerId": null,
+  "Title": "Overview",
+  "IsProtected": true,
+  "SignalExpression": null,
+  "Charts": [
+    {
+      "Id": "chart-6",
+      "Title": "User Count",
+      "SignalExpression": null,
+      "Queries": [
+        {
+          "Id": "chartquery-7",
+          "Measurements": [
+            {
+              "Value": "count(*)",
+              "Label": "count"
+            }
+          ],
+          "Where": "CustomEvent='Creation' and ActorType ='UserActor'",
+          "SignalExpression": null,
+          "GroupBy": [],
+          "DisplayStyle": {
+            "Type": "Bar",
+            "LineFillToZeroY": true,
+            "LineShowMarkers": false,
+            "BarOverlaySum": true,
+            "SuppressLegend": false,
+            "Palette": "Default"
+          },
+          "Alerts": [],
+          "Having": null,
+          "OrderBy": [],
+          "Limit": null
+        }
+      ],
+      "DisplayStyle": {
+        "WidthColumns": 4,
+        "HeightRows": 1
+      }
+    },
+    {
+      "Id": "chart-10",
+      "Title": "Broker Count",
+      "SignalExpression": null,
+      "Queries": [
+        {
+          "Id": "chartquery-11",
+          "Measurements": [
+            {
+              "Value": "count(*)",
+              "Label": "count"
+            }
+          ],
+          "Where": "CustomEvent='Creation' and ActorType ='BrokerActor'",
+          "SignalExpression": null,
+          "GroupBy": [],
+          "DisplayStyle": {
+            "Type": "Bar",
+            "LineFillToZeroY": false,
+            "LineShowMarkers": true,
+            "BarOverlaySum": true,
+            "SuppressLegend": false,
+            "Palette": "Reds"
+          },
+          "Alerts": [],
+          "Having": null,
+          "OrderBy": [],
+          "Limit": null
+        }
+      ],
+      "DisplayStyle": {
+        "WidthColumns": 4,
+        "HeightRows": 1
+      }
+    },
+    {
+      "Id": "chart-41",
+      "Title": "Ticket Provider Count",
+      "SignalExpression": null,
+      "Queries": [
+        {
+          "Id": "chartquery-42",
+          "Measurements": [
+            {
+              "Value": "count(*)",
+              "Label": "count"
+            }
+          ],
+          "Where": "CustomEvent='Creation' and ActorType ='TicketProviderActor'",
+          "SignalExpression": null,
+          "GroupBy": [],
+          "DisplayStyle": {
+            "Type": "Bar",
+            "LineFillToZeroY": false,
+            "LineShowMarkers": true,
+            "BarOverlaySum": true,
+            "SuppressLegend": false,
+            "Palette": "Default"
+          },
+          "Alerts": [],
+          "Having": null,
+          "OrderBy": [],
+          "Limit": null
+        }
+      ],
+      "DisplayStyle": {
+        "WidthColumns": 4,
+        "HeightRows": 1
+      }
+    },
+    {
+      "Id": "chart-49",
+      "Title": "Booked ticket count(User Actor)",
+      "SignalExpression": null,
+      "Queries": [
+        {
+          "Id": "chartquery-50",
+          "Measurements": [
+            {
+              "Value": "count(*)",
+              "Label": "count"
+            }
+          ],
+          "Where": "BookedTicketRoute is not null and ActorType='UserActor'",
+          "SignalExpression": null,
+          "GroupBy": [
+            "BookedTicketRoute"
+          ],
+          "DisplayStyle": {
+            "Type": "Bar",
+            "LineFillToZeroY": false,
+            "LineShowMarkers": true,
+            "BarOverlaySum": true,
+            "SuppressLegend": false,
+            "Palette": "Default"
+          },
+          "Alerts": [],
+          "Having": null,
+          "OrderBy": [],
+          "Limit": null
+        }
+      ],
+      "DisplayStyle": {
+        "WidthColumns": 6,
+        "HeightRows": 2
+      }
+    },
+    {
+      "Id": "chart-75",
+      "Title": "Booked ticket count(TP)",
+      "SignalExpression": null,
+      "Queries": [
+        {
+          "Id": "chartquery-76",
+          "Measurements": [
+            {
+              "Value": "count(*)",
+              "Label": "count"
+            }
+          ],
+          "Where": "ActorType='TicketProviderActor' and BookedTicketRoute is not null",
+          "SignalExpression": null,
+          "GroupBy": [
+            "ActorPath"
+          ],
+          "DisplayStyle": {
+            "Type": "Bar",
+            "LineFillToZeroY": false,
+            "LineShowMarkers": true,
+            "BarOverlaySum": true,
+            "SuppressLegend": false,
+            "Palette": "Default"
+          },
+          "Alerts": [],
+          "Having": null,
+          "OrderBy": [],
+          "Limit": null
+        }
+      ],
+      "DisplayStyle": {
+        "WidthColumns": 6,
+        "HeightRows": 2
+      }
+    },
+    {
+      "Id": "chart-69",
+      "Title": "Exceptions",
+      "SignalExpression": null,
+      "Queries": [
+        {
+          "Id": "chartquery-70",
+          "Measurements": [
+            {
+              "Value": "count(*)",
+              "Label": "count"
+            }
+          ],
+          "Where": "ExceptionType is not null",
+          "SignalExpression": null,
+          "GroupBy": [
+            "ActorType"
+          ],
+          "DisplayStyle": {
+            "Type": "Table",
+            "LineFillToZeroY": false,
+            "LineShowMarkers": true,
+            "BarOverlaySum": true,
+            "SuppressLegend": false,
+            "Palette": "Default"
+          },
+          "Alerts": [],
+          "Having": null,
+          "OrderBy": [],
+          "Limit": null
+        }
+      ],
+      "DisplayStyle": {
+        "WidthColumns": 6,
+        "HeightRows": 1
+      }
+    },
+    {
+      "Id": "chart-77",
+      "Title": "Booked tickets by ticket providers",
+      "SignalExpression": null,
+      "Queries": [
+        {
+          "Id": "chartquery-78",
+          "Measurements": [
+            {
+              "Value": "count(*)",
+              "Label": "count"
+            }
+          ],
+          "Where": "ActorType='TicketProviderActor' and BookedTicketRoute is not null",
+          "SignalExpression": null,
+          "GroupBy": [
+            "ActorPath"
+          ],
+          "DisplayStyle": {
+            "Type": "Table",
+            "LineFillToZeroY": false,
+            "LineShowMarkers": true,
+            "BarOverlaySum": true,
+            "SuppressLegend": false,
+            "Palette": "Default"
+          },
+          "Alerts": [],
+          "Having": null,
+          "OrderBy": [],
+          "Limit": null
+        }
+      ],
+      "DisplayStyle": {
+        "WidthColumns": 6,
+        "HeightRows": 1
+      }
+    }
+  ],
+  "Id": "dashboard-14",
+  "Links": {
+    "Self": "api/dashboards/dashboard-14?version=97",
+    "Group": "api/dashboards/resources"
+  }
+}

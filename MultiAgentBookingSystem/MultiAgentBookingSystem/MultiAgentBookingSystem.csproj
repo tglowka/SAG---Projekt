@@ -113,7 +113,6 @@
     <Compile Include="Actors\TicketProviders\TicketProviderCoordinatorActor.cs" />
     <Compile Include="Actors\Users\UserActor.cs" />
     <Compile Include="Actors\Users\UserCoordinatorActor.cs" />
-    <Compile Include="ColorConsole.cs" />
     <Compile Include="DataResources\RandomGenerator.cs" />
     <Compile Include="DataResources\TicketsHelper.cs" />
     <Compile Include="Exceptions\Common\RandomException.cs" />

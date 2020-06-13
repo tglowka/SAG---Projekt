@@ -1,0 +1,1 @@
+select MessageCounter, * from stream where ActorType = 'BrokerActor' and MessageCounter is not null order by MessageCounter desc 

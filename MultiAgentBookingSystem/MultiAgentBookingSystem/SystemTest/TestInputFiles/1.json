@@ -1,6 +1,6 @@
 {
   "InitialActorCount": {
-    "UserActor": 10,
+    "UserActor": 100000,
     "BrokerActor": 1,
     "TicketProviderActor": 2
   },
@@ -14,7 +14,7 @@
   "NewActorCount": {
     "UserActor": {
       "MinCount": 10,
-      "MaxCount": 10
+      "MaxCount": 1000
     },
     "BrokerActor": {
       "MinCount": 1,
@@ -27,12 +27,12 @@
   },
 
   "RandomExceptionMessageInterval": {
-    "UserCoordinatorActor": 5,
-    "BrokerCoordinatorActor": 5,
-    "TicketProviderCoordinatorActor": 5,
-    "UserActor": 5,
-    "BrokerActor": 5,
-    "TicketProviderActor": 5
+    "UserCoordinatorActor": 0,
+    "BrokerCoordinatorActor": 0,
+    "TicketProviderCoordinatorActor": 0,
+    "UserActor": 0,
+    "BrokerActor": 0,
+    "TicketProviderActor": 0
   },
 
   "RandomExceptionMessageProbability": {
@@ -44,5 +44,7 @@
     "TicketProviderActor": 50
   },
 
-  "InitiazlSingleRouteTicketsCount": 0
+  "InitiazlSingleRouteTicketsCount": 0,
+
+  "DeepLogging": false
 }

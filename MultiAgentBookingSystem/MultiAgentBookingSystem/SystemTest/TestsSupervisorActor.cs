@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using MultiAgentBookingSystem.Actors;
 using MultiAgentBookingSystem.DataResources;
+using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages.Abstracts;
 using MultiAgentBookingSystem.Messages.Common;
 using MultiAgentBookingSystem.System;
@@ -23,22 +24,22 @@ namespace MultiAgentBookingSystem.SystemTest
         private readonly string _brokerActors = ActorPaths.BrokerActors.Path;
         private readonly string _ticketProviderActors = ActorPaths.TickerProviderActors.Path;
 
+        private readonly InputFile _inputFile;
 
-        private readonly InputFile InputFile;
-
-        private SystemTestsService SystemTestsService;
+        private SystemTestsService _systemTestsService;
 
         public TestsSupervisorActor(string inputFilesDirectory, string inputFileName)
         {
-            this.SystemTestsService = new SystemTestsService();
+            this._systemTestsService = new SystemTestsService();
 
-            this.InputFile = this.SystemTestsService.GetInputFIle(inputFilesDirectory, inputFileName);
+            this._inputFile = this._systemTestsService.GetInputFIle(inputFilesDirectory, inputFileName);
 
             this.StartSimulation();
         }
 
         private void StartSimulation()
         {
+            this.SetupDeepLogging();
             this.SetupSingleRouteCount();
             this.SetupNewActorMessageSchedulers();
             this.SetupInitialActorCount();
@@ -49,9 +50,9 @@ namespace MultiAgentBookingSystem.SystemTest
 
         private void SetupInitialActorCount()
         {
-            int initialUserActorCount = this.InputFile.InitialActorCount.UserActor;
-            int initialBrokerActorCount = this.InputFile.InitialActorCount.BrokerActor;
-            int initialTicketProviderActorCount = this.InputFile.InitialActorCount.TicketProviderActor;
+            int initialUserActorCount = this._inputFile.InitialActorCount.UserActor;
+            int initialBrokerActorCount = this._inputFile.InitialActorCount.BrokerActor;
+            int initialTicketProviderActorCount = this._inputFile.InitialActorCount.TicketProviderActor;
 
             AddActorMessage addUserActorMessage = new AddActorMessage(initialUserActorCount);
             TicketBookingActorSystem.Instance.actorSystem.ActorSelection(this._userCoordinatorActorPath).Tell(addUserActorMessage);
@@ -66,23 +67,23 @@ namespace MultiAgentBookingSystem.SystemTest
         private void SetupNewActorMessageSchedulers()
         {
             this.SetupNewActorMessageScheduler(
-                                                this.InputFile.NewActorCount.UserActor.MinCount,
-                                                this.InputFile.NewActorCount.UserActor.MaxCount,
-                                                this.InputFile.NewActorMessageInterval.UserActor,
+                                                this._inputFile.NewActorCount.UserActor.MinCount,
+                                                this._inputFile.NewActorCount.UserActor.MaxCount,
+                                                this._inputFile.NewActorMessageInterval.UserActor,
                                                 this._userCoordinatorActorPath
                                                 );
 
             this.SetupNewActorMessageScheduler(
-                                                this.InputFile.NewActorCount.BrokerActor.MinCount,
-                                                this.InputFile.NewActorCount.BrokerActor.MaxCount,
-                                                this.InputFile.NewActorMessageInterval.BrokerActor,
+                                                this._inputFile.NewActorCount.BrokerActor.MinCount,
+                                                this._inputFile.NewActorCount.BrokerActor.MaxCount,
+                                                this._inputFile.NewActorMessageInterval.BrokerActor,
                                                 this._brokerCoordinatorActorPath
                                                 );
 
             this.SetupNewActorMessageScheduler(
-                                                this.InputFile.NewActorCount.TicketProviderActor.MinCount,
-                                                this.InputFile.NewActorCount.TicketProviderActor.MaxCount,
-                                                this.InputFile.NewActorMessageInterval.TicketProviderActor,
+                                                this._inputFile.NewActorCount.TicketProviderActor.MinCount,
+                                                this._inputFile.NewActorCount.TicketProviderActor.MaxCount,
+                                                this._inputFile.NewActorMessageInterval.TicketProviderActor,
                                                 this._ticketProviderCoordinatorActorPath
                                                 );
         }
@@ -105,38 +106,38 @@ namespace MultiAgentBookingSystem.SystemTest
         private void SetupRandomExceptionSchedulers()
         {
             this.SetupRandomExceptionScheduler(
-                                                this.InputFile.RandomExceptionMessageProbability.UserCoordinatorActor,
-                                                this.InputFile.RandomExceptionMessageInterval.UserCoordinatorActor,
+                                                this._inputFile.RandomExceptionMessageProbability.UserCoordinatorActor,
+                                                this._inputFile.RandomExceptionMessageInterval.UserCoordinatorActor,
                                                 this._userCoordinatorActorPath
                                                 );
 
             this.SetupRandomExceptionScheduler(
-                                               this.InputFile.RandomExceptionMessageProbability.BrokerCoordinatorActor,
-                                               this.InputFile.RandomExceptionMessageInterval.BrokerCoordinatorActor,
+                                               this._inputFile.RandomExceptionMessageProbability.BrokerCoordinatorActor,
+                                               this._inputFile.RandomExceptionMessageInterval.BrokerCoordinatorActor,
                                                this._brokerCoordinatorActorPath
                                                );
 
             this.SetupRandomExceptionScheduler(
-                                               this.InputFile.RandomExceptionMessageProbability.TicketProviderCoordinatorActor,
-                                               this.InputFile.RandomExceptionMessageInterval.TicketProviderCoordinatorActor,
+                                               this._inputFile.RandomExceptionMessageProbability.TicketProviderCoordinatorActor,
+                                               this._inputFile.RandomExceptionMessageInterval.TicketProviderCoordinatorActor,
                                                this._ticketProviderCoordinatorActorPath
                                                );
 
             this.SetupRandomExceptionScheduler(
-                                               this.InputFile.RandomExceptionMessageProbability.UserActor,
-                                               this.InputFile.RandomExceptionMessageInterval.UserActor,
+                                               this._inputFile.RandomExceptionMessageProbability.UserActor,
+                                               this._inputFile.RandomExceptionMessageInterval.UserActor,
                                                this._userActors
                                                );
 
             this.SetupRandomExceptionScheduler(
-                                               this.InputFile.RandomExceptionMessageProbability.BrokerActor,
-                                               this.InputFile.RandomExceptionMessageInterval.BrokerActor,
+                                               this._inputFile.RandomExceptionMessageProbability.BrokerActor,
+                                               this._inputFile.RandomExceptionMessageInterval.BrokerActor,
                                                this._brokerActors
                                                );
 
             this.SetupRandomExceptionScheduler(
-                                               this.InputFile.RandomExceptionMessageProbability.TicketProviderActor,
-                                               this.InputFile.RandomExceptionMessageInterval.TicketProviderActor,
+                                               this._inputFile.RandomExceptionMessageProbability.TicketProviderActor,
+                                               this._inputFile.RandomExceptionMessageInterval.TicketProviderActor,
                                                this._ticketProviderActors
                                                );
         }
@@ -158,7 +159,12 @@ namespace MultiAgentBookingSystem.SystemTest
 
         private void SetupSingleRouteCount()
         {
-            TicketsHelper.singleRouteCount = this.InputFile.InitiazlSingleRouteTicketsCount;
+            TicketsHelper.singleRouteCount = this._inputFile.InitiazlSingleRouteTicketsCount;
+        }
+
+        private void SetupDeepLogging()
+        {
+            LoggingConfiguration.Instance.DeepLogging = this._inputFile.DeepLogging;
         }
 
         #endregion

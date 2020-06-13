@@ -55,16 +55,16 @@ namespace MultiAgentBookingSystem.Logger
                 loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, EVENT: {CustomEvent} ", actorType.Name, actorPath.ToStringWithoutAddress(), CustomTypes.Creation.ToString("g"));
         }
 
-        public void LogReceiveMessageInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, Type messageType, string from)
+        public void LogReceiveMessageInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, Type messageType, string from, int messageCounter)
         {
             if (this.DeepLogging)
-                loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Received: {MessageType} From: {From}", actorType.Name, actorPath.ToStringWithoutAddress(), messageType.Name, from);
+                loggingAdapter.Info("COUNTER: {MessageCounter} ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Received: {MessageType} From: {From}", messageCounter, actorType.Name, actorPath.ToStringWithoutAddress(), messageType.Name, from);
         }
 
-        public void LogSendMessageInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, Type messageType, string to)
+        public void LogSendMessageInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, Type messageType, string to, int messageCounter)
         {
             if (this.DeepLogging)
-                loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Send: {MessageType}, To: {To}", actorType.Name, actorPath.ToStringWithoutAddress(), messageType.Name, to);
+                loggingAdapter.Info("COUNTER: {MessageCounter} ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Send: {MessageType}, To: {To}", messageCounter, actorType.Name, actorPath.ToStringWithoutAddress(), messageType.Name, to);
         }
 
         public void LogTicketProviderBookingMessageInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, string bookedTicketRoute, Guid userActorId)

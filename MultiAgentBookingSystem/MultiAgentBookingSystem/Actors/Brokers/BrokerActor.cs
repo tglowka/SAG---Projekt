@@ -39,7 +39,8 @@ namespace MultiAgentBookingSystem.Actors
             {
                 this.LogReceiveMessageInfo(message);
                 this._allTicketProviders = message.AllTicketProviders;
-                this.Become(this.WaitingForUserActorState);
+                if (this._allTicketProviders.Count() > 0)
+                    this.Become(this.WaitingForUserActorState);
             });
 
             this.Receive<BookTicketByBrokerMessage>(message =>

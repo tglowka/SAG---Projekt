@@ -1,14 +1,14 @@
 {
   "InitialActorCount": {
-    "UserActor": 100000,
+    "UserActor": 1,
     "BrokerActor": 1,
-    "TicketProviderActor": 2
+    "TicketProviderActor": 1
   },
 
   "NewActorMessageInterval": {
-    "UserActor": 1,
+    "UserActor": 0,
     "BrokerActor": 0,
-    "TicketProviderActor": 10
+    "TicketProviderActor": 0
   },
 
   "NewActorCount": {
@@ -44,7 +44,7 @@
     "TicketProviderActor": 50
   },
 
-  "InitiazlSingleRouteTicketsCount": 0,
+  "InitiazlSingleRouteTicketsCount": 1,
 
-  "DeepLogging": false
+  "DeepLogging": true
 }

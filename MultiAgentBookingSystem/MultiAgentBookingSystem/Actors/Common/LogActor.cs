@@ -14,6 +14,8 @@ namespace MultiAgentBookingSystem.Actors.Common
 {
     public class LogActor : ReceiveActor
     {
+        private int _messageCounter = 0;
+
         protected virtual void HandleRandomException(RandomExceptionMessage message, Type actorType)
         {
             double randomDouble = RandomGenerator.Instance.random.NextDouble() * 100;
@@ -27,12 +29,14 @@ namespace MultiAgentBookingSystem.Actors.Common
 
         protected void LogReceiveMessageInfo(Object message)
         {
-            LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+            ++this._messageCounter;
+            LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress(), this._messageCounter);
         }
 
         protected void LogSendMessageInfo(Object message, string to)
         {
-            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), to);
+            ++this._messageCounter;
+            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), to, this._messageCounter);
         }
 
         protected void LogActorCreation()

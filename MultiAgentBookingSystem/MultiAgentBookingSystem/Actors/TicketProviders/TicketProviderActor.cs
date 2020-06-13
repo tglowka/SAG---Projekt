@@ -118,7 +118,7 @@ namespace MultiAgentBookingSystem.Actors
 
                 Sender.Tell(noAvailableTicketMessage);
 
-                LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, noAvailableTicketMessage.GetType(), Sender.Path.ToStringWithoutAddress());
+                this.LogSendMessageInfo(noAvailableTicketMessage, Sender.Path.ToStringWithoutAddress());
             }
 
         }

@@ -41,9 +41,9 @@ namespace MultiAgentBookingSystem.DataResources
         }
 
         /// <summary>
-        ///     Get random tickets (route name + number of tickets for that route) that particular ticket provider offers to the customers (user actors).
+        ///     Get random tickets (route name, number of tickets for that route) that particular ticket provider offers to the customers (user actors).
         /// </summary>
-        /// <returns>Dictionary of random routes + number of available tickets for that route.</returns>
+        /// <returns>Dictionary of random routes and number of available tickets for that route.</returns>
         public static Dictionary<string, int> GetRandomOfferedTickets()
         {
             Dictionary<string, int> offeredTickets = new Dictionary<string, int>();

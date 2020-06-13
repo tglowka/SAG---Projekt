@@ -18,19 +18,15 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class UserActor : CoordinatorChildActor
     {
-        private Guid id;
-        private Dictionary<Guid, IActorRef> brokers;
+        private Dictionary<Guid, IActorRef> _brokers;
 
-        private string ticketRoute;
+        private readonly string _ticketRoute;
 
-        public UserActor(Guid id)
+        public UserActor(Guid id) : base(id)
         {
-            LoggingConfiguration.Instance.LogActorCreation(Context.GetLogger(), this.GetType(), Self.Path);
-
-            this.id = id;
-            this.ticketRoute = TicketsHelper.GetRandomRoute();
-
-            Become(LookingForBrokersState);
+            this.LogActorCreation();
+            this._ticketRoute = TicketsHelper.GetRandomRoute();
+            this.Become(this.LookingForBrokersState);
         }
 
         #region private methods
@@ -41,27 +37,22 @@ namespace MultiAgentBookingSystem.Actors
 
             this.GetAllBrokers();
 
-            Receive<ReceiveTimeout>(message =>
+            this.Receive<ReceiveTimeout>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
+                this.LogReceiveMessageInfo(message);
                 this.GetAllBrokers();
             });
 
-            Receive<ReceiveAllBrokers>(message =>
+            this.Receive<ReceiveAllBrokers>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
+                this.LogReceiveMessageInfo(message);
+                this.ReceiveAllBrokersMessageHandler(message);
 
-                this.brokers = new Dictionary<Guid, IActorRef>(message.brokers);
-
-                if (this.brokers.Count > 0)
-                {
-                    Become(BookingTicketState);
-                }
             });
 
-            Receive<RandomExceptionMessage>(message =>
+            this.Receive<RandomExceptionMessage>(message =>
             {
+                this.LogReceiveMessageInfo(message);
                 this.HandleRandomException(message, this.GetType());
             });
         }
@@ -74,86 +65,70 @@ namespace MultiAgentBookingSystem.Actors
 
             Receive<TicketProviderConfirmationMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
-                LoggingConfiguration.Instance.LogTicketProviderBookingMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, this.ticketRoute, this.id);
-                Context.Stop(Self);
+                this.LogReceiveMessageInfo(message);
+                this.ReceiveTicketAndStop();
             });
 
             Receive<NoAvailableTicketMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
-                if (this.brokers?.Count > 0)
-                    this.BookTicketByBroker();
-                else
-                    Become(LookingForBrokersState);
+                this.LogReceiveMessageInfo(message);
+                this.KeepLookingForTicket();
             });
 
             Receive<RandomExceptionMessage>(message =>
             {
+                this.LogReceiveMessageInfo(message);
                 this.HandleRandomException(message, this.GetType());
             });
         }
+        private void ReceiveAllBrokersMessageHandler(ReceiveAllBrokers message)
+        {
+            this._brokers = new Dictionary<Guid, IActorRef>(message.brokers);
 
-        /// <summary>
-        ///     Send message to BrokerCoordinator actor in order to get all brokers.
-        /// </summary>
+            if (this._brokers.Count > 0)
+            {
+                this.Become(this.BookingTicketState);
+            }
+        }
+
         private void GetAllBrokers()
         {
             GetAllBrokersMessage getAllBrokersMessage = new GetAllBrokersMessage();
-            ActorSelection brokerCoordinator = TicketBookingActorSystem.Instance.actorSystem.ActorSelection("/user/SystemSupervisor/BrokerCoordinator");
+            ActorSelection brokerCoordinator = TicketBookingActorSystem.Instance.actorSystem.ActorSelection(ActorPaths.BrokerCoordinatorActor.Path);
 
             brokerCoordinator.Tell(getAllBrokersMessage);
 
-            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, getAllBrokersMessage.GetType(), "/user/SystemSupervisor/BrokerCoordinator");
+            this.LogSendMessageInfo(getAllBrokersMessage, ActorPaths.BrokerCoordinatorActor.Path);
         }
 
-        /// <summary>
-        ///     Send BookTicketByBrokerMessage message to randomly known broker. If there is no known broker, send message to BrokerCoordinator to get them.
-        /// </summary>
         private void BookTicketByBroker()
         {
             // Get random broker from known brokers and remove him from known brokers.
-            Guid randomBroker = this.brokers.ElementAt(RandomGenerator.Instance.random.Next(0, this.brokers.Count)).Key;
-            IActorRef randomBrokerActor = this.brokers[randomBroker];
-            this.brokers.Remove(randomBroker);
+            Guid randomBroker = this._brokers.ElementAt(RandomGenerator.Instance.random.Next(0, this._brokers.Count)).Key;
+            IActorRef randomBrokerActor = this._brokers[randomBroker];
+            this._brokers.Remove(randomBroker);
 
-            BookTicketByBrokerMessage bookTicketByBrokerMessage = new BookTicketByBrokerMessage(Self, this.id, this.ticketRoute);
+            BookTicketByBrokerMessage bookTicketByBrokerMessage = new BookTicketByBrokerMessage(Self, this.Id, this._ticketRoute);
             randomBrokerActor.Tell(bookTicketByBrokerMessage);
 
-            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, bookTicketByBrokerMessage.GetType(), randomBrokerActor.Path.ToStringWithoutAddress());
+            this.LogSendMessageInfo(bookTicketByBrokerMessage, randomBrokerActor.Path.ToStringWithoutAddress());
         }
 
-
-        #endregion
-
-        #region Lifecycle hooks
-
-        protected override void PreStart()
+        private void KeepLookingForTicket()
         {
-            LoggingConfiguration.Instance.LogActorPreStart(Context.GetLogger(), Self.Path);
+            if (this._brokers?.Count > 0)
+                this.BookTicketByBroker();
+            else
+                this.Become(this.LookingForBrokersState);
         }
 
-        protected override void PostStop()
+        private void ReceiveTicketAndStop()
         {
-            //LoggingConfiguration.Instance.LogActorPostStop(Context.GetLogger(), Self.Path);
-            LoggingConfiguration.Instance.LogActorStop(Context.GetLogger(), this.GetType(), Self.Path);
-        }
+            LoggingConfiguration.Instance.LogTicketProviderBookingMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, this._ticketRoute, this.Id);
 
-        protected override void PreRestart(Exception reason, object message)
-        {
-            LoggingConfiguration.Instance.LogActorPreRestart(Context.GetLogger(), Self.Path, reason);
-            base.PreRestart(reason, message);
-        }
-
-        protected override void PostRestart(Exception reason)
-        {
-            LoggingConfiguration.Instance.LogActorPostRestart(Context.GetLogger(), Self.Path, reason);
-            base.PostRestart(reason);
+            Context.Stop(Self);
         }
 
         #endregion
-
     }
 }

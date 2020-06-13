@@ -107,6 +107,7 @@
     <Compile Include="Actors\Brokers\BrokerCoordinatorActor.cs" />
     <Compile Include="Actors\Common\CoordinatorActor.cs" />
     <Compile Include="Actors\Common\CoordinatorChildActor.cs" />
+    <Compile Include="Actors\Common\LogActor.cs" />
     <Compile Include="Actors\Supervisor\SystemSupervisorActor.cs" />
     <Compile Include="Actors\TicketProviders\TicketProviderActor.cs" />
     <Compile Include="Actors\TicketProviders\TicketProviderCoordinatorActor.cs" />

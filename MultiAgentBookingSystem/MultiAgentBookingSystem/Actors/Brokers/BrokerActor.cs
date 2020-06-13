@@ -19,19 +19,14 @@ namespace MultiAgentBookingSystem.Actors
 {
     public class BrokerActor : CoordinatorChildActor, IWithUnboundedStash
     {
-        private Guid id;
-
         private IEnumerable<IActorRef> _allTicketProviders;
 
         public IStash Stash { get; set; }
 
-        public BrokerActor(Guid id)
+        public BrokerActor(Guid id) : base(id)
         {
-            LoggingConfiguration.Instance.LogActorCreation(Context.GetLogger(), this.GetType(), Self.Path);
-
-            this.id = id;
-
-            Become(WaitingForTicketProvidersState);
+            this.LogActorCreation();
+            this.Become(this.WaitingForTicketProvidersState);
         }
 
         #region private methods
@@ -40,18 +35,16 @@ namespace MultiAgentBookingSystem.Actors
         {
             this.GetAllTicketProviders();
 
-            Receive<ReceiveAllTicketProvidersMessage>(message =>
+            this.Receive<ReceiveAllTicketProvidersMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
+                this.LogReceiveMessageInfo(message);
                 this._allTicketProviders = message.AllTicketProviders;
-                Become(WaitingForUserActorState);
+                this.Become(this.WaitingForUserActorState);
             });
 
-            Receive<BookTicketByBrokerMessage>(message =>
+            this.Receive<BookTicketByBrokerMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
+                this.LogReceiveMessageInfo(message);
                 this.Stash.Stash();
             });
 
@@ -59,54 +52,45 @@ namespace MultiAgentBookingSystem.Actors
 
         private void WaitingForUserActorState()
         {
-            Stash.UnstashAll();
+            this.Stash.UnstashAll();
 
-            Receive<ReceiveAllTicketProvidersMessage>(message =>
+            this.Receive<ReceiveAllTicketProvidersMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
+                this.LogReceiveMessageInfo(message);
                 this._allTicketProviders = message.AllTicketProviders;
             });
 
-            Receive<BookTicketByBrokerMessage>(message =>
+            this.Receive<BookTicketByBrokerMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
+                this.LogReceiveMessageInfo(message);
                 this.NotifyRandomTicketProvider(message);
             });
 
-            Receive<NoAvailableTicketMessage>(message =>
+            this.Receive<NoAvailableTicketMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
+                this.LogReceiveMessageInfo(message);
                 this.ForwardNoAvailableTicketsMessage(message);
             });
 
-            Receive<TicketProviderResponseMessage>(message =>
+            this.Receive<TicketProviderResponseMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
+                this.LogReceiveMessageInfo(message);
                 this.BookTicket(message);
             });
 
-            Receive<TicketProviderConfirmationMessage>(message =>
+            this.Receive<TicketProviderConfirmationMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
+                this.LogReceiveMessageInfo(message);
                 this.NotifyUserAboutConfirmation(message);
             });
 
-            Receive<RandomExceptionMessage>(message =>
+            this.Receive<RandomExceptionMessage>(message =>
             {
+                this.LogReceiveMessageInfo(message);
                 this.HandleRandomException(message, this.GetType());
             });
         }
 
-        /// <summary>
-        ///     Send notification to all ticket providers that particular user want to buy a ticket on particular route.
-        /// </summary>
-        /// <param name="userActorId">User actor id</param>
-        /// <param name="ticketRoute">Ticket route</param>
         private void NotifyRandomTicketProvider(BookTicketByBrokerMessage message)
         {
             NotifyTicketProvidersMessage notifyTicketProvidersMessage = new NotifyTicketProvidersMessage(message.UserActor, message.UserActorId, message.TicketRoute);
@@ -115,32 +99,23 @@ namespace MultiAgentBookingSystem.Actors
 
             randomTicketProvider.Tell(notifyTicketProvidersMessage);
 
-            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, notifyTicketProvidersMessage.GetType(), "All ticket providers.");
+            this.LogSendMessageInfo(notifyTicketProvidersMessage, randomTicketProvider.Path.ToStringWithoutAddress());
         }
 
-        /// <summary>
-        ///     Send message to particular ticket provider with intention of booking the ticket.
-        /// </summary>
-        /// <param name="sender">Ticket provider</param>
-        /// <param name="userActorId">User actor id</param>
-        /// <param name="ticketRoute">Ticket route</param>
         private void BookTicket(TicketProviderResponseMessage message)
         {
             BookTicketMessage bookTicketMessage = new BookTicketMessage(message.UserActor, message.UserActorId, message.TicketRoute);
 
             Sender.Tell(bookTicketMessage);
 
-            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, bookTicketMessage.GetType(), Sender.Path.ToStringWithoutAddress());
+            this.LogSendMessageInfo(bookTicketMessage, Sender.Path.ToStringWithoutAddress());
         }
 
-        /// <summary>
-        ///     Notify user actor that ticket is booked. TODO Wait for user confirmation for particular time.
-        /// </summary>
         private void NotifyUserAboutConfirmation(TicketProviderConfirmationMessage message)
         {
             message.UserActor.Forward(message);
 
-            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), message.UserActor.Path.ToStringWithoutAddress());
+            this.LogSendMessageInfo(message, message.UserActor.Path.ToStringWithoutAddress());
         }
 
         private void GetAllTicketProviders()
@@ -149,44 +124,15 @@ namespace MultiAgentBookingSystem.Actors
 
             TicketBookingActorSystem.Instance.actorSystem.ActorSelection(ActorPaths.TicketProviderCoordinatorActor.Path).Tell(getAllTicketProvidersMessage);
 
-            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, getAllTicketProvidersMessage.GetType(), SystemConstants.TicketProviderCoordinatorActorName);
+            this.LogSendMessageInfo(getAllTicketProvidersMessage, SystemConstants.TicketProviderCoordinatorActorName);
         }
 
         private void ForwardNoAvailableTicketsMessage(NoAvailableTicketMessage message)
         {
             message.UserActor.Forward(message);
-
-            LoggingConfiguration.Instance.LogSendMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), message.UserActor.Path.ToStringWithoutAddress());
-        }
-
-
-        #endregion
-
-        #region Lifecycle hooks
-
-        protected override void PreStart()
-        {
-            LoggingConfiguration.Instance.LogActorPreStart(Context.GetLogger(), Self.Path);
-        }
-
-        protected override void PostStop()
-        {
-            LoggingConfiguration.Instance.LogActorPostStop(Context.GetLogger(), Self.Path);
-        }
-
-        protected override void PreRestart(Exception reason, object message)
-        {
-            LoggingConfiguration.Instance.LogActorPreRestart(Context.GetLogger(), Self.Path, reason);
-            base.PreRestart(reason, message);
-        }
-
-        protected override void PostRestart(Exception reason)
-        {
-            LoggingConfiguration.Instance.LogActorPostRestart(Context.GetLogger(), Self.Path, reason);
-            base.PostRestart(reason);
+            this.LogSendMessageInfo(message, message.UserActor.Path.ToStringWithoutAddress());
         }
 
         #endregion
-
     }
 }

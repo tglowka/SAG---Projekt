@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.DataResources
 {
-    /// <summary>
-    ///     Singleton that returns random generaton instance.
-    /// </summary>
     public sealed class RandomGenerator
     {
         private static readonly Lazy<RandomGenerator> instance = new Lazy<RandomGenerator>(() => new RandomGenerator(new Random()));

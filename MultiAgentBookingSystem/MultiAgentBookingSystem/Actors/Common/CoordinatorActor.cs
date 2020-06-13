@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors.Common
 {
-    public abstract class CoordinatoActor<TParentOf> : ReceiveActor where TParentOf : class
+    public abstract class CoordinatoActor<TParentOf> : LogActor where TParentOf : class
     {
         protected Dictionary<Guid, IActorRef> childrenActors = new Dictionary<Guid, IActorRef>();
 
@@ -27,9 +27,9 @@ namespace MultiAgentBookingSystem.Actors.Common
             }
         }
 
-        protected void CreateChildActor(int minCount, int maxCount)
+        protected void CreateChildActor(AddRandomCountActorMessage message)
         {
-            int actorCount = RandomGenerator.Instance.random.Next(minCount, maxCount + 1);
+            int actorCount = RandomGenerator.Instance.random.Next(message.MinActorCount, message.MaxActorCount + 1);
 
             for (int i = 0; i < actorCount; i++)
             {
@@ -56,17 +56,6 @@ namespace MultiAgentBookingSystem.Actors.Common
         {
             LoggingConfiguration.Instance.LogActiveActorCount(Context.GetLogger(), actorType, actorPath, Context.GetChildren().Count());
             LoggingConfiguration.Instance.LogAllActorCount(Context.GetLogger(), actorType, actorPath, this.childrenActors.Count);
-        }
-
-        protected virtual void HandleRandomException(RandomExceptionMessage message, Type actorType)
-        {
-            double randomDouble = RandomGenerator.Instance.random.NextDouble() * 100;
-
-            if (message.ExceptionProbability > randomDouble)
-            {
-                LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), actorType, Self.Path.ToStringWithoutAddress(), typeof(RandomException));
-                throw new RandomException(Self.Path, actorType);
-            }
         }
 
         protected override SupervisorStrategy SupervisorStrategy()

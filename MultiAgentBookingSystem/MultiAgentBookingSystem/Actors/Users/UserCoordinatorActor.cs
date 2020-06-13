@@ -22,73 +22,39 @@ namespace MultiAgentBookingSystem.Actors
             this.Become(this.InitialState);
         }
 
-        public UserCoordinatorActor(int childCount)
-        {
-            this.CreateChildActor(childCount);
-
-            this.Become(this.InitialState);
-        }
-
         #region private methods
 
         private void InitialState()
         {
             Receive<AddActorMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
+                this.LogReceiveMessageInfo(message);
                 this.CreateChildActor(message.ActorCount);
             });
 
             Receive<AddRandomCountActorMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
-                this.CreateChildActor(message.MinActorCount, message.MaxActorCount);
+                this.LogReceiveMessageInfo(message);
+                this.CreateChildActor(message);
             });
 
             Receive<RemoveActorMessage>(message =>
             {
-                LoggingConfiguration.Instance.LogReceiveMessageInfo(Context.GetLogger(), this.GetType(), Self.Path, message.GetType(), Sender.Path.ToStringWithoutAddress());
-
+                this.LogReceiveMessageInfo(message);
                 this.RemoveChildActor(message.ActorId);
             });
 
             Receive<LogChildernCountMessage>(message =>
             {
+                this.LogReceiveMessageInfo(message);
                 this.LogChildrenCount(this.GetType(), Self.Path);
             });
 
             Receive<RandomExceptionMessage>(message =>
             {
+                this.LogReceiveMessageInfo(message);
                 this.HandleRandomException(message, this.GetType());
             });
-        }
-
-        #endregion
-
-        #region Lifecycle hooks
-
-        protected override void PreStart()
-        {
-            LoggingConfiguration.Instance.LogActorPreStart(Context.GetLogger(), Self.Path);
-        }
-
-        protected override void PostStop()
-        {
-            LoggingConfiguration.Instance.LogActorPostStop(Context.GetLogger(), Self.Path);
-        }
-
-        protected override void PreRestart(Exception reason, object message)
-        {
-            LoggingConfiguration.Instance.LogActorPreRestart(Context.GetLogger(), Self.Path, reason);
-            base.PreRestart(reason, message);
-        }
-
-        protected override void PostRestart(Exception reason)
-        {
-            LoggingConfiguration.Instance.LogActorPostRestart(Context.GetLogger(), Self.Path, reason);
-            base.PostRestart(reason);
         }
 
         #endregion

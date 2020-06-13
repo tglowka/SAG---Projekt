@@ -12,17 +12,13 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors.Common
 {
-    public abstract class CoordinatorChildActor : ReceiveActor
+    public abstract class CoordinatorChildActor : LogActor
     {
-        protected virtual void HandleRandomException(RandomExceptionMessage message, Type actorType)
-        {
-            double randomDouble = RandomGenerator.Instance.random.NextDouble() * 100;
+        protected Guid Id { get; }
 
-            if (message.ExceptionProbability > randomDouble)
-            {
-                LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), actorType, Self.Path.ToStringWithoutAddress(), typeof(RandomException));
-                throw new RandomException(Self.Path, actorType);
-            }
+        protected CoordinatorChildActor(Guid id)
+        {
+            this.Id = id;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace MultiAgentBookingSystem.Actors.Common
 
         protected void CreateChildActor(AddRandomCountActorMessage message)
         {
-            int actorCount = RandomGenerator.Instance.random.Next(message.MinActorCount, message.MaxActorCount + 1);
+            int actorCount = RandomGenerator.Next(message.MinActorCount, message.MaxActorCount + 1);
 
             for (int i = 0; i < actorCount; i++)
             {

@@ -95,7 +95,7 @@ namespace MultiAgentBookingSystem.SystemTest
                 AddRandomCountActorMessage addRandomCountActorMessage = new AddRandomCountActorMessage(minCount, maxCount);
 
                 TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
-                    TimeSpan.FromSeconds(0),
+                    TimeSpan.FromSeconds(interval),
                     TimeSpan.FromSeconds(interval),
                     TicketBookingActorSystem.Instance.actorSystem.ActorSelection(coordinatorActorPath),
                     addRandomCountActorMessage,
@@ -149,7 +149,7 @@ namespace MultiAgentBookingSystem.SystemTest
                 RandomExceptionMessage randomExceptionMessage = new RandomExceptionMessage(exceptionProbability);
 
                 TicketBookingActorSystem.Instance.actorSystem.Scheduler.ScheduleTellRepeatedly(
-                    TimeSpan.FromSeconds(0),
+                    TimeSpan.FromSeconds(interval),
                     TimeSpan.FromSeconds(interval),
                     TicketBookingActorSystem.Instance.actorSystem.ActorSelection(coordinatorActorPath),
                     randomExceptionMessage,

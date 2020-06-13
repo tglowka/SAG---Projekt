@@ -96,7 +96,7 @@ namespace MultiAgentBookingSystem.Actors
         {
             NotifyTicketProvidersMessage notifyTicketProvidersMessage = new NotifyTicketProvidersMessage(message.UserActor, message.UserActorId, message.TicketRoute);
 
-            IActorRef randomTicketProvider = _allTicketProviders.RandomElement(RandomGenerator.Instance.random);
+            IActorRef randomTicketProvider = _allTicketProviders.RandomElement();
 
             randomTicketProvider.Tell(notifyTicketProvidersMessage);
 

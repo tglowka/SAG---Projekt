@@ -104,7 +104,7 @@ namespace MultiAgentBookingSystem.Actors
         private void BookTicketByBroker()
         {
             // Get random broker from known brokers and remove him from known brokers.
-            Guid randomBroker = this._brokers.ElementAt(RandomGenerator.Instance.random.Next(0, this._brokers.Count)).Key;
+            Guid randomBroker = this._brokers.ElementAt(RandomGenerator.Next(0, this._brokers.Count)).Key;
             IActorRef randomBrokerActor = this._brokers[randomBroker];
             this._brokers.Remove(randomBroker);
 

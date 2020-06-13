@@ -6,22 +6,77 @@ using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.DataResources
 {
-    public sealed class RandomGenerator
+    public static class RandomGenerator
     {
-        private static readonly Lazy<RandomGenerator> instance = new Lazy<RandomGenerator>(() => new RandomGenerator(new Random()));
+        private static readonly Random _global = new Random();
+        [ThreadStatic] private static Random _local;
 
-        public readonly Random random;
-        private RandomGenerator(Random random)
+        public static int Next()
         {
-            this.random = random;
+            if (_local == null)
+            {
+                lock (_global)
+                {
+                    if (_local == null)
+                    {
+                        int seed = _global.Next();
+                        _local = new Random(seed);
+                    }
+                }
+            }
+
+            return _local.Next();
         }
 
-        public static RandomGenerator Instance
+        public static int Next(int maxValue)
         {
-            get
+            if (_local == null)
             {
-                return instance.Value;
+                lock (_global)
+                {
+                    if (_local == null)
+                    {
+                        int seed = _global.Next();
+                        _local = new Random(seed);
+                    }
+                }
             }
+
+            return _local.Next(maxValue);
+        }
+
+        public static int Next(int minValue, int maxValue)
+        {
+            if (_local == null)
+            {
+                lock (_global)
+                {
+                    if (_local == null)
+                    {
+                        int seed = _global.Next();
+                        _local = new Random(seed);
+                    }
+                }
+            }
+
+            return _local.Next(minValue, maxValue);
+        }
+
+        public static double NextDouble()
+        {
+            if (_local == null)
+            {
+                lock (_global)
+                {
+                    if (_local == null)
+                    {
+                        int seed = _global.Next();
+                        _local = new Random(seed);
+                    }
+                }
+            }
+
+            return _local.NextDouble();
         }
     }
 }

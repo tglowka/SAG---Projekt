@@ -37,7 +37,7 @@ namespace MultiAgentBookingSystem.DataResources
         /// <returns>Random route from possible routes.</returns>
         public static string GetRandomRoute()
         {
-            return possibleRoutes[RandomGenerator.Instance.random.Next(possibleRoutes.Count)];
+            return possibleRoutes[RandomGenerator.Next(possibleRoutes.Count)];
         }
 
         /// <summary>

@@ -18,7 +18,7 @@ namespace MultiAgentBookingSystem.Actors.Common
 
         protected virtual void HandleRandomException(RandomExceptionMessage message, Type actorType)
         {
-            double randomDouble = RandomGenerator.Instance.random.NextDouble() * 100;
+            double randomDouble = RandomGenerator.NextDouble() * 100;
 
             if (message.ExceptionProbability > randomDouble)
             {

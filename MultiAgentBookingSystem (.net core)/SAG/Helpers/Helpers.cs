@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiAgentBookingSystem.DataResources;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,14 +9,14 @@ namespace MultiAgentBookingSystem.Helpers
 {
     public static class Helpers
     {
-        public static T RandomElement<T>(this IEnumerable<T> source, Random rng)
+        public static T RandomElement<T>(this IEnumerable<T> source)
         {
             T current = default(T);
             int count = 0;
             foreach (T element in source)
             {
                 count++;
-                if (rng.Next(count) == 0)
+                if (RandomGenerator.Next(count) == 0)
                 {
                     current = element;
                 }

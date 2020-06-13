@@ -17,7 +17,7 @@ namespace SAG
             // Inititialize supervisor actor
             TicketBookingActorSystem.Instance.actorSystem.ActorOf(Props.Create<SystemSupervisorActor>(), "SystemSupervisor");
 
-            TicketBookingActorSystem.Instance.actorSystem.ActorOf(Props.Create<TestsSupervisorActor>(@"\SystemTest\TestInputFiles\", "1.json"), "TestsSupervisor");
+            TicketBookingActorSystem.Instance.actorSystem.ActorOf(Props.Create<TestsSupervisorActor>(@"/SystemTest/TestInputFiles/", "1.json"), "TestsSupervisor");
 
             Console.ReadKey();
 

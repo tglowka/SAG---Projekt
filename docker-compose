@@ -1,9 +1,0 @@
-version: '3'
-services:
-	seq:
-		build ./Seq
-		ports:
-			- "80:80"
-			- "5341:5341"
-		environment:
-			ACCEPT_EULA=Y

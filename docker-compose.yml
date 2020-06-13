@@ -1,0 +1,15 @@
+version: '3'
+services:
+    seq:
+        image: datalust/seq:latest
+        ports:
+         - "80:80"
+         - "5341:5341"
+        environment:
+         - ACCEPT_EULA=Y
+        container_name: seq
+    sag_system:
+        build: ./MultiAgentBookingSystem (.net core)/SAG/
+        tty: true
+        container_name: sag_system
+        network_mode: host

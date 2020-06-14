@@ -4,6 +4,8 @@ using MultiAgentBookingSystem.DataResources;
 using MultiAgentBookingSystem.Exceptions.Common;
 using MultiAgentBookingSystem.Logger;
 using MultiAgentBookingSystem.Messages.Common;
+using MultiAgentBookingSystem.SystemTest;
+using SAG.SystemTest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,12 +68,22 @@ namespace MultiAgentBookingSystem.Actors.Common
                     switch (ex)
                     {
                         case RandomException randomException:
+                            LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), this.GetType(), Self.Path.ToStringWithoutAddress(), ex.GetType(), ex.Message);
                             return Directive.Resume;
                         default:
-                            LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), this.GetType(), "Unknown actor", ex.GetType());
+                            LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), this.GetType(), Self.Path.ToStringWithoutAddress(), ex.GetType(), ex.Message);
                             return Directive.Resume;
                     }
                 });
+        }
+
+        protected void Delay()
+        {
+            this.DelayMessageProcessing(
+                InputFileAdditionalOptions.SystemDelays.Coordinators.MinCount,
+                InputFileAdditionalOptions.SystemDelays.Coordinators.MaxCount,
+                InputFileAdditionalOptions.SystemDelays.CoordinatorsProbability
+                );
         }
     }
 }

@@ -9,7 +9,7 @@ namespace MultiAgentBookingSystem.DataResources
     public static class TicketsHelper
     {
         /// <summary>
-        ///     Max ticket count on particular route.
+        ///     Ticket count on particular route.
         /// </summary>
         public static int singleRouteCount = 0;
 

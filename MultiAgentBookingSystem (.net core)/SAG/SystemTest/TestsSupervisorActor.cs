@@ -7,6 +7,7 @@ using MultiAgentBookingSystem.Messages.Common;
 using MultiAgentBookingSystem.System;
 using MultiAgentBookingSystem.SystemTest.Models;
 using MultiAgentBookingSystem.SystemTest.Services;
+using SAG.SystemTest.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,19 +29,17 @@ namespace MultiAgentBookingSystem.SystemTest
 
         private SystemTestsService _systemTestsService;
 
-        public TestsSupervisorActor(string inputFilesDirectory, string inputFileName)
+        public TestsSupervisorActor(InputFile inputFile)
         {
-            this._systemTestsService = new SystemTestsService();
 
-            this._inputFile = this._systemTestsService.GetInputFIle(inputFilesDirectory, inputFileName);
+            this._systemTestsService = new SystemTestsService();
+            this._inputFile = inputFile;
 
             this.StartSimulation();
         }
 
         private void StartSimulation()
         {
-            this.SetupDeepLogging();
-            this.SetupSingleRouteCount();
             this.SetupNewActorMessageSchedulers();
             this.SetupInitialActorCount();
             this.SetupRandomExceptionSchedulers();
@@ -155,16 +154,6 @@ namespace MultiAgentBookingSystem.SystemTest
                     randomExceptionMessage,
                     Self);
             }
-        }
-
-        private void SetupSingleRouteCount()
-        {
-            TicketsHelper.singleRouteCount = this._inputFile.InitiazlSingleRouteTicketsCount;
-        }
-
-        private void SetupDeepLogging()
-        {
-            LoggingConfiguration.Instance.DeepLogging = this._inputFile.DeepLogging;
         }
 
         #endregion

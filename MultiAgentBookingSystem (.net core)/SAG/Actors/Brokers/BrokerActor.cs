@@ -9,6 +9,7 @@ using MultiAgentBookingSystem.Messages.Common;
 using MultiAgentBookingSystem.Messages.TicketProviders;
 using MultiAgentBookingSystem.Messages.Users;
 using MultiAgentBookingSystem.System;
+using MultiAgentBookingSystem.SystemTest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,7 @@ namespace MultiAgentBookingSystem.Actors
 
             this.Receive<ReceiveAllTicketProvidersMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this._allTicketProviders = message.AllTicketProviders;
                 if (this._allTicketProviders.Count() > 0)
@@ -45,6 +47,7 @@ namespace MultiAgentBookingSystem.Actors
 
             this.Receive<BookTicketByBrokerMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.Stash.Stash();
             });
@@ -57,36 +60,42 @@ namespace MultiAgentBookingSystem.Actors
 
             this.Receive<ReceiveAllTicketProvidersMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this._allTicketProviders = message.AllTicketProviders;
             });
 
             this.Receive<BookTicketByBrokerMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.NotifyRandomTicketProvider(message);
             });
 
             this.Receive<NoAvailableTicketMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.ForwardNoAvailableTicketsMessage(message);
             });
 
             this.Receive<TicketProviderResponseMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.BookTicket(message);
             });
 
             this.Receive<TicketProviderConfirmationMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.NotifyUserAboutConfirmation(message);
             });
 
             this.Receive<RandomExceptionMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.HandleRandomException(message, this.GetType());
             });
@@ -133,6 +142,7 @@ namespace MultiAgentBookingSystem.Actors
             message.UserActor.Forward(message);
             this.LogSendMessageInfo(message, message.UserActor.Path.ToStringWithoutAddress());
         }
+
 
         #endregion
     }

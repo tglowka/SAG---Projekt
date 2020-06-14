@@ -72,10 +72,9 @@ namespace MultiAgentBookingSystem.Logger
             if (this.DeepLogging)
                 loggingAdapter.Info("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Booked: {BookedTicketRoute}, For: {BookedTicketOwner}", actorType.Name, actorPath.ToStringWithoutAddress(), bookedTicketRoute, userActorId);
         }
-        public void LogExceptionMessageWarning(ILoggingAdapter loggingAdapter, Type actorType, string actorPath, Type exception)
+        public void LogExceptionMessageWarning(ILoggingAdapter loggingAdapter, Type actorType, string actorPath, Type exceptionType, string exceptionMessage)
         {
-            if (this.DeepLogging)
-                loggingAdapter.Warning("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, Exception: {ExceptionType}", actorType.Name, actorPath, exception.Name);
+            loggingAdapter.Warning("ACTOR TYPE: {ActorType}, ACTOR PATH: {ActorPath}, ExceptionType: {ExceptionType}, ExceptionMessage: {ExceptionMessage}", actorType.Name, actorPath, exceptionType.Name, exceptionMessage);
         }
 
         public void LogTicketProviderBookedTicketCountMessageInfo(ILoggingAdapter loggingAdapter, Type actorType, ActorPath actorPath, int bookedTicketCount)

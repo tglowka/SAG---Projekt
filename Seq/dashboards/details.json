@@ -165,7 +165,7 @@
             "ActorPath"
           ],
           "DisplayStyle": {
-            "Type": "Bar",
+            "Type": "Line",
             "LineFillToZeroY": false,
             "LineShowMarkers": true,
             "BarOverlaySum": true,

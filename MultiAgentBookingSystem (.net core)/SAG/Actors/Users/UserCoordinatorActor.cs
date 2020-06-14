@@ -28,30 +28,35 @@ namespace MultiAgentBookingSystem.Actors
         {
             Receive<AddActorMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.CreateChildActor(message.ActorCount);
             });
 
             Receive<AddRandomCountActorMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.CreateChildActor(message);
             });
 
             Receive<RemoveActorMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.RemoveChildActor(message.ActorId);
             });
 
             Receive<LogChildernCountMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.LogChildrenCount(this.GetType(), Self.Path);
             });
 
             Receive<RandomExceptionMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.HandleRandomException(message, this.GetType());
             });

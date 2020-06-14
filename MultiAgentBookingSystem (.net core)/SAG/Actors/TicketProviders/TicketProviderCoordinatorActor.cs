@@ -33,6 +33,7 @@ namespace MultiAgentBookingSystem.Actors
         {
             this.Receive<AddActorMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.CreateChildActor(message.ActorCount);
                 this.SendAllTicketProvidersToAllBrokers();
@@ -40,6 +41,7 @@ namespace MultiAgentBookingSystem.Actors
 
             this.Receive<AddRandomCountActorMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.CreateChildActor(message);
                 this.SendAllTicketProvidersToAllBrokers();
@@ -47,24 +49,28 @@ namespace MultiAgentBookingSystem.Actors
 
             this.Receive<RemoveActorMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.RemoveChildActor(message.ActorId);
             });
 
             this.Receive<GetAllTicketProvidersMessage>(message =>
            {
+               this.Delay();
                this.LogReceiveMessageInfo(message);
                this.SendAllTicketProviders();
            });
 
             this.Receive<LogChildernCountMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.LogChildrenCount(this.GetType(), Self.Path);
             });
 
             this.Receive<RandomExceptionMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.HandleRandomException(message, this.GetType());
             });

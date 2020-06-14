@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SAG.SystemTest.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,6 @@ namespace MultiAgentBookingSystem.SystemTest.Models
         public RandomExceptionMessageInterval RandomExceptionMessageInterval { get; set; }
         public int InitiazlSingleRouteTicketsCount { get; set; }
         public bool DeepLogging { get; set; }
+        public SystemDelays SystemDelays { get; set; }
     }
 }

@@ -33,9 +33,13 @@ namespace MultiAgentBookingSystem.SystemTest.Services
 
                 return inputFile;
             }
-            catch
+            catch (Exception exception)
             {
-                throw;
+                Console.WriteLine($"Error - file directory: {inputFilesDirectorystring}, file: {inputFileName}, message: {exception.Message}");
+                Console.ReadKey();
+                Environment.Exit(-1);
+
+                return null;
             }
         }
 

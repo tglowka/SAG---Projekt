@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MultiAgentBookingSystem.Actors.Common
@@ -22,8 +23,9 @@ namespace MultiAgentBookingSystem.Actors.Common
 
             if (message.ExceptionProbability > randomDouble)
             {
-                LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), actorType, Self.Path.ToStringWithoutAddress(), typeof(RandomException));
-                throw new RandomException(Self.Path, actorType);
+                RandomException randomException = new RandomException(Self.Path, actorType);
+                LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), actorType, Self.Path.ToStringWithoutAddress(), typeof(RandomException), randomException.Message);
+                throw randomException;
             }
         }
 
@@ -42,6 +44,20 @@ namespace MultiAgentBookingSystem.Actors.Common
         protected void LogActorCreation()
         {
             LoggingConfiguration.Instance.LogActorCreation(Context.GetLogger(), this.GetType(), Self.Path);
+        }
+
+        protected void DelayMessageProcessing(int minMilliseconds, int maxMilliseconds, double probability)
+        {
+            if (minMilliseconds > 0 && maxMilliseconds > 0)
+            {
+                double randomDouble = RandomGenerator.NextDouble() * 100;
+
+                if (probability > randomDouble)
+                {
+                    int delay = RandomGenerator.Next(minMilliseconds, maxMilliseconds + 1);
+                    Thread.Sleep(delay);
+                }
+            }
         }
     }
 }

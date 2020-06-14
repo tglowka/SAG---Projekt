@@ -34,24 +34,28 @@ namespace MultiAgentBookingSystem.Actors
         {
             this.Receive<NotifyTicketProvidersMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.NotifyBrokerAboutTicketAvailability(message);
             });
 
             this.Receive<BookTicketMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.BookTicketForUser(message);
             });
 
             this.Receive<LogBookedTicketCountMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.LogBookedTicketCount();
             });
 
             this.Receive<RandomExceptionMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.HandleRandomException(message, this.GetType());
             });

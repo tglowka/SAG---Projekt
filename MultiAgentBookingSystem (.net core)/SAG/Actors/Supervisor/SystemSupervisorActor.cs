@@ -55,9 +55,10 @@ namespace MultiAgentBookingSystem.Actors
                     switch (ex)
                     {
                         case RandomException randomException:
+                            LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), this.GetType(), Self.Path.ToStringWithoutAddress(), ex.GetType(), ex.Message);
                             return Directive.Resume;
                         default:
-                            LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), this.GetType(), "Unknown actor", ex.GetType());
+                            LoggingConfiguration.Instance.LogExceptionMessageWarning(Context.GetLogger(), this.GetType(), Self.Path.ToStringWithoutAddress(), ex.GetType(), ex.Message);
                             return Directive.Resume;
                     }
                 });

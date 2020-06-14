@@ -39,12 +39,14 @@ namespace MultiAgentBookingSystem.Actors
 
             this.Receive<ReceiveTimeout>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.GetAllBrokers();
             });
 
             this.Receive<ReceiveAllBrokers>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.ReceiveAllBrokersMessageHandler(message);
 
@@ -52,6 +54,7 @@ namespace MultiAgentBookingSystem.Actors
 
             this.Receive<RandomExceptionMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.HandleRandomException(message, this.GetType());
             });
@@ -65,18 +68,21 @@ namespace MultiAgentBookingSystem.Actors
 
             Receive<TicketProviderConfirmationMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.ReceiveTicketAndStop();
             });
 
             Receive<NoAvailableTicketMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.KeepLookingForTicket();
             });
 
             Receive<RandomExceptionMessage>(message =>
             {
+                this.Delay();
                 this.LogReceiveMessageInfo(message);
                 this.HandleRandomException(message, this.GetType());
             });

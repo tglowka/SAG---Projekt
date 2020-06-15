@@ -39,19 +39,19 @@ Do realizacji proejktu zostały użyte następujące narzędzia i technologie:
 
 ### 3.2 Architektura rozwiązania
 
-![Architektura](img/architektura.png)
+![Architektura](img/Architektura.png)
 
 Aplikacja składa się z dwóch głównych komponentów fizycznie podzielonych na dockerowe kontenery. Kontenery zostały złączone w jedną działającą całość za pomocą programu Docker Compose.
 
 ### 3.3 System rezerwacji biletów
 
-#### 3.3.1 Architekura systemu
+#### 3.3.1 Architekur systemu
 
 Głównym komponentem całego rozwiązania jest jak i głównym celem projektu jest wieloagentowy system rezerwacji biletów. Został on zaimplementowany przy użyciu frameworku .NET Core. Głównym atutem platformy .NET Core jest jej wieloplatformowość. Implementacja środowiska wieloagentowego w ramach systemu została wykonana za pomocą zbioru bibliotek Akka.NET
 
 Poniższy schemat przedstawia hierarchie aktorów w systemie.
 
-![Architektura](img/architektura_agentowa.png)
+![Hierarchia agentów](img/architektura_agentowa.png)
 
 W obrębie sytemu możemy wyodrębnić następujących aktorów:
 
@@ -75,7 +75,7 @@ W prezentowanym rozwiązaniu kluczowe są następujące założenia:
 
 Brokerzy są głównym medium komunikacyjnym w procesie rezerwacji biletów. Pierwszą rzeczą, którą robi broker po stworzeniu jest komunikacja z koordynatorem dostawców (ticker provider coordinator) w celu uzyskania listy dostępnych dostawców. Poniższy schemat przedstawia komunikacje pomiędzy brokerem a koordynatoerm dostawców w celu do otrzymania takiej listy.
 
-![scenariusz_ogolny](img/broker_dostawcy.png)
+![broker_dostawcy](img/broker_dostawcy.png)
 
 Gdy broker wie o tym, że jest dostępny przynajmniej jeden dostawca biletów proces rezerwacji może się rozpocząć.
 Poniższy schemat przedstawia komunikacje pomiędzy aktorami w procecsie rezerwacji biletu. 
@@ -155,7 +155,7 @@ Logowane są następujące zdarzenia:
 
 Poniżej przedstawiony przykładowy zrzut ekranu ze zwizualizowanymi danymi z serwera Seq:
 
-![scenariusz_ogolny](img/seq_ogolne.png)
+![seq_ogolne](img/seq_ogolne.png)
 
 ![seq_general](img/seq_general.png)
 

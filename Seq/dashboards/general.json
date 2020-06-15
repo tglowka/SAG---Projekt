@@ -1,12 +1,12 @@
 {
   "OwnerId": "user-admin",
-  "Title": "Production",
+  "Title": "General",
   "IsProtected": false,
   "SignalExpression": null,
   "Charts": [
     {
       "Id": "chart-88",
-      "Title": "Booked Tickets By Ticket Providers (clone)",
+      "Title": "Booked tickets by ticket providerss",
       "SignalExpression": null,
       "Queries": [
         {

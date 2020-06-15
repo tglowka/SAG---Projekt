@@ -1,1 +1,0 @@
-select MessageCounter, * from stream where ActorType = 'TicketProviderActor' and MessageCounter is not null order by MessageCounter desc 

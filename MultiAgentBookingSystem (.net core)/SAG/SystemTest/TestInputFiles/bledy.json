@@ -1,0 +1,63 @@
+{
+  "InitialActorCount": {
+    "UserActor": 100,
+    "BrokerActor": 1,
+    "TicketProviderActor": 3
+  },
+
+  "NewActorMessageInterval": {
+    "UserActor": 5,
+    "BrokerActor": 0,
+    "TicketProviderActor": 0
+  },
+
+  "NewActorCount": {
+    "UserActor": {
+      "MinCount": 10,
+      "MaxCount": 100
+    },
+    "BrokerActor": {
+      "MinCount": 1,
+      "MaxCount": 1
+    },
+    "TicketProviderActor": {
+      "MinCount": 1,
+      "MaxCount": 1
+    }
+  },
+
+  "RandomExceptionMessageInterval": {
+    "UserCoordinatorActor": 10,
+    "BrokerCoordinatorActor": 10,
+    "TicketProviderCoordinatorActor": 10,
+    "UserActor": 10,
+    "BrokerActor": 10,
+    "TicketProviderActor": 10
+  },
+
+  "RandomExceptionMessageProbability": {
+    "UserCoordinatorActor": 20,
+    "BrokerCoordinatorActor": 20,
+    "TicketProviderCoordinatorActor": 20,
+    "UserActor": 20,
+    "BrokerActor": 20,
+    "TicketProviderActor": 20
+  },
+
+  "SystemDelays": {
+    "Coordinators": {
+      "MinCount": 1,
+      "MaxCount": 1
+    },
+    "CoordinatorsProbability": 0,
+    "CoordinatorsChildren": {
+      "MinCount": 5000,
+      "MaxCount": 5000
+    },
+    "CoordinatorsChildrenProbability": 0
+  },
+
+  "InitiazlSingleRouteTicketsCount": 1,
+
+  "DeepLogging": true
+}

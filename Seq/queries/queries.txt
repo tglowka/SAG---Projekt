@@ -1,0 +1,8 @@
+# Ticket provider actor receive and send messages
+select MessageCounter, * from stream where ActorType = 'TicketProviderActor' and MessageCounter is not null order by MessageCounter desc 
+
+# Broker actor receive and send messages
+select MessageCounter, * from stream where ActorType = 'BrokerActor' and MessageCounter is not null order by MessageCounter desc 
+
+# User actor receive and send messages
+select MessageCounter, * from stream where ActorType = 'UserActor' and MessageCounter is not null order by MessageCounter desc 

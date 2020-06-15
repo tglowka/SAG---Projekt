@@ -13,7 +13,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="SystemTest\TestInputFiles\1.json">
+    <None Update="SystemTest\TestInputFiles\komunikacja.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SystemTest\TestInputFiles\opoznienie.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SystemTest\TestInputFiles\bledy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SystemTest\TestInputFiles\obciazeniowe.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

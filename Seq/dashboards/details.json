@@ -111,7 +111,7 @@
     },
     {
       "Id": "chart-49",
-      "Title": "Booked ticket count(User Actor)",
+      "Title": "Booked ticket count grouped by ticket route",
       "SignalExpression": null,
       "Queries": [
         {
@@ -148,7 +148,7 @@
     },
     {
       "Id": "chart-75",
-      "Title": "Booked ticket count(TP)",
+      "Title": "Booked tickets by ticket providers",
       "SignalExpression": null,
       "Queries": [
         {
@@ -222,7 +222,7 @@
     },
     {
       "Id": "chart-77",
-      "Title": "Booked tickets by ticket providers",
+      "Title": "Booked ticket count  by ticket providers",
       "SignalExpression": null,
       "Queries": [
         {

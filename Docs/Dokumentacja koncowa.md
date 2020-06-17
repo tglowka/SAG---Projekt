@@ -281,16 +281,73 @@ W celu zakończenia pracy systemu w drugiej konsoli wystarczy wcisnąć dowolny 
 ### 4.3 Przeprowadzone testy
 
 #### 4.3.1 Testy komunikacji
-Do przeprowadzenia podstawowego testu wymiany wiadomości pomiędzy aktorami trzeciej warstwy użyty został plik **komunikacja.json**. Charakteryzuje się on stworzeniem tylko jednego user actora, jednego brokera i jednego ticket providera. Żeby podejrzeć w jaki sposób zostały wymienione wiadomości należy w zakładce events wykonać zapytania znajdujące się w katalogu *Seq\queries*. Widać, jak odbywa sie proces rezerwacji biletu oraz to, że aktorzy wymieniają wiadomości w sposób opisany wcześniej
+Do przeprowadzenia podstawowego testu wymiany wiadomości pomiędzy aktorami trzeciej warstwy użyty został plik **komunikacja.json**. Charakteryzuje się on stworzeniem tylko jednego user actora, jednego brokera i jednego ticket providera. Żeby podejrzeć w jaki sposób zostały wymienione wiadomości należy w zakładce events wykonać zapytania znajdujące się w katalogu *Seq\queries*. Widać, jak odbywa sie proces rezerwacji biletu oraz to, że aktorzy wymieniają wiadomości w sposób opisany wcześniej.
+
+![seq_komunikacja_user](img/seq_komunikacja_user.png)
+
+![seq_komunikacja_broker](img/seq_komunikacja_broker.png)
+
+![seq_komunikacja_ticket_provider](img/seq_komunikacja_ticket_provider.png)
+
+Pierwszy screen przedstawia logi user actora, drugi brokera a trzeci ticket providera. Można zauważyć następujące akcje wykonywane przez kolejnych aktorów.
+
+User actor:
+- Wysyła *GetAllBrokersMessage* do broker coordinatora w celu otrzymanai listy brokerów
+- Otrzymuje ReceiveAllBrokers od broker coordinatora liste brokerów
+- Wysyła *BookTicketByBrokerMessage* do brokera w celu rezerwacji biletu
+- Otrzymuje od brokera *TicketProviderConfirtmationMessage* (bilet zarezerwowany)
+
+Broker actor:
+- Wysyła *GetAllTicketProvidersMessage* do ticket provider coordinatora w celu otrzymania listy ticket providerów
+- Otrzymuje wiadomość *ReceiveAllTicketProvidersMessage* dwukrotnie, jedną w odpowiedzi na wcześniej wysłaną wiadomość a drugą w związku ze stworzeniem nowego ticket providera (brokerzy dostają powiadomienia o nowych ticket providerach)
+- Otrzymuje *BookTicketByBrokerMessage* od user actora
+- Wysyła *NotifyTicketProvidersMessage* do ticket providera jako zapytanie o bilet
+- Otrzymuje od niego *TicketProviderResponseMessage* co oznacza, że ticket provider ma odpowiedni bilet na stanie
+- Wysyła *BookTicketMessage* do ticket providera w celu zarezerwowania biletu
+- Otrzymuje *TicketProviderConfirmationMessage* co oznacza, że bilet został zarezerwowany (nikt w między czasie nie zarezerwował tego biletu)
+- Przekazuje *TicketProviderConfirmationMessage* do user actora
+
+Ticket provider actor:
+- Otrzymuje *LogBookedTicketCountMessage* od ticket providera (otrzymuje to co 5 sekund w celu logowania liczby aktualnie zarezerwowanych biletów)
+- Otrzymuje *NotifyTicketProvidersMessage* od brokera (broker pyta o bilet)
+- Wysyła *TicketProviderResponseMessage* w celu poinformowania brokera o dostępności biletu
+- Otrzymuje *BookTicketMessage* od brokera (broker chce zarezerwować bilet)
+- Wysyła *TicketProviderConfirmationMessage* do brokera (bilet zarezerwowany)
+- Dalej już tylko *LogBookedTicketCountMessage*
 
 #### 4.3.2 Testy obciążeniowe 
-Do przeprowadzenia testów obciążeniowych użyty został plik **obciazeniowe.json**. Charakteryzuje się on dużą początkową liczbą user actorów chcących rezerwować bilet oraz zwiększaniem w 10 sekundowym interwale tej liczby o tysiąc. Również opcja *DeepLogging* została ustawiona na false ze względu na zbyt duża liczbę generowanych logów (tylko dashboard *General* będzie pokazywał dane przez wyłączoną opcję *DeepLogging*). Widać, że pomimo dużej liczby przetwarzanych wiadomości system w krótkim czasie (kilkunastu sekund) pokonał falę rezerwacji. 
+Do przeprowadzenia testów obciążeniowych użyty został plik **obciazeniowe.json**. Charakteryzuje się on dużą początkową liczbą user actorów (1000) chcących rezerwować bilet oraz zwiększaniem w 5 sekundowym interwale tej liczby o losową z przedziału <10,1000>. 
+
+![seq_obciazeniowe](img/seq_obciazeniowe.png)
+
+Powyższy zrzut pokazuje, że system pomimo zalania falą rezerwacji radzi sobie z rezerwacją biletów (nawet przy tak małej liczbie brokerów i ticket providerów).
 
 #### 4.3.3  Testy losowych błędów
-Do przeprowadzenia testów z losowymi błędami użyty został plik **bledy.json**. Charakteryzuje się on wysyłaniem wiadomości generujących losowy błąd w interwałach 10 sekundowych do wszystkich aktorów. Ponadto prawdopodobieństwo rzucenia błędu zostało ustawione na 20% oraz *DeepLogging* został ustawiony na true. Widać, że pomimo generowanych błędów (tabela *Exceptions* na dashboardzie *Overview*) system zachowuje się w sposób poprawny.
+Do przeprowadzenia testów z losowymi błędami użyty został plik **bledy.json**. Charakteryzuje się on wysyłaniem wiadomości generujących losowy błąd w interwałach 10 sekundowych do wszystkich aktorów. Ponadto prawdopodobieństwo rzucenia błędu zostało ustawione na 20% oraz *DeepLogging* został ustawiony na true.
+
+![seq_bledy](img/seq_bledy.png)
+
+Powyższy zrzut prezentuje, że pomimo występowania losowych błędów (Tabela Exceptions) u aktorów system w czasie swojego działania zdołał zarezerwować odpowiednią liczbę biletów.  
 
 #### 4.3.4 Testy opóźnienia
-Do przeprowadzenia testów z opóźnieniem użyty został plik **opoznienie.json**. Charakteryzuje się on opóźnianiem każdej przetwarzanej wiadomości przez aktorów najniższej warstwy o 5 sekund. Widać, że system działa z zadanym opóźnieniem. Bilety są bardzo wolono rezerwowane.
+Do przeprowadzenia testów z opóźnieniem użyty został plik **opoznienie.json**. Charakteryzuje się on opóźnianiem każdej przetwarzanej wiadomości przez aktorów najniższej warstwy o 5 sekund.
+
+![seq_opoznienie](img/seq_opoznienie.png)
+
+ Powyższy screen pokazuje, że system działa z zadanym opóźnieniem. Bilety są bardzo wolono rezerwowane. Przez kilka minut działania zostały zaledwie zarezerwowane 4 bilety. 
+
+ Dla porównania zostałą także przeprowadzona symulacja z takimi samymi parametrami jak powyższa z tą różnicą, że mamy 10 brokerów i 10 ticket providerów.
+
+ ![seq_opoznienie2](img/seq_opoznienie2.png)
+
+Porównując obie symulacje można od razu zauważyć, że zwiększając liczbę brokerów i ticket providerów w podobnym oknie czasowym zostało zarezerwowane znacznie więcej biletów. Stało się tak ponieważ całe obciążenie zsotało rozłożone na większą ilość brokerów. Również brokerzy mieli więcej możliwości jeśli chodzi o rezerwację biletów (więcej ticket providerów).
+
+#### 4.3.5 Testy nowego dostawcy
+Do przeprowadzenia testów z pojawieniem się nowych dostawców został uzyty plik **dostawcy.json**. Charakteryzuje się dodawaniem nowego ticket providera w 30 sekundowym interwale (początkowo jest ich dwóch).
+
+ ![seq_dostawcy](img/seq_dostawcy.png)
+
+Powyższy zrzut pokazuje, że każdy kolejny dostwca w momencie pojawienia się w systemie zaczyna być widoczny dla brokerów. Brokerzy tym samym biorą nowego ticket providera pod uwagę w fazie szukania biletu. Wykres "Booked tickets by ticket providers" bardzo dobrze obrazuje sytuację, w której z pojawieniem się każdego nowego ticket providera wykres się "spłaszcza".
 
 ### 4.4 Własne testy
 W celu przeprowadzenia testów za pomocą własnego scenariusza należy skomponowany plik konfiguracyjny umieścić w folderze *MultiAgentBookingSystem (.net core)\SAG\SystemTest\TestInputFiles*. Następnie należy  powtórzyć opisane kroki w sekcji *4.2 Uruchomienie*.
